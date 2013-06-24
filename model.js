@@ -1,7 +1,7 @@
 var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0, "concAna":0}
 
 var convertToMoles = function(volume, concentration){
-    var moles = concentraion*volume;
+    var moles = concentration*volume;
     return moles;
 }
 
