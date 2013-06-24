@@ -9,6 +9,8 @@ var findPH = function(concentration){
     return -Math.log(concentration);
 }
 
+
+/* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This wil be fixed later. It is iteratively called in buildData*/
 var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
     
     if (molesAnalyte >= molesTitrantAdded){
@@ -31,5 +33,10 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
     var pH = findPH(change)
     
     return pH
+}
+/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the size of 1 drop of titrant*/
+var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant, Ka, step) {
+    
+    
 }
 
