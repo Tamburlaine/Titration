@@ -1,12 +1,18 @@
 var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0, "concAna":0}
 
+
+
+
 var convertToMoles = function(volume, concentration){
     var moles = concentration*volume;
     return moles;
 }
 
+
+
+/*findPH converts from concentraion to pH. It uses Math.log, which is base e, so it also uses the log change of base formula to convert to log base 10.*/
 var findPH = function(concentration){
-    return -Math.log(concentration);
+    return -Math.log(concentration)/Math.log(10);
 }
 
 
@@ -17,22 +23,19 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
         molesAnalyte -= molesTitrantAdded;
         var molesProduct = molesTitrantAdded;
         molesTitrantAdded = 0;
-    }
     
-    else if (molesTitrantAdded> molesAnalyte){
-        molesTitrantAdded -= molesAnalyte;
-        var molesProduct = molesAnalyte;
-        molesAnalyte = 0;
-    }
         
-    var concProduct = molesProduct / volume
-    var concAnalyte = molesAnalyte / volume
-    
-    var change = Ka *concAnalyte/concProduct
-    
-    var pH = findPH(change)
-    
-    return pH
+        var concProduct = molesProduct / volume;
+        var concAnalyte = molesAnalyte / volume;
+        
+        var change = Ka*concAnalyte/concProduct;
+        
+        var pH = findPH(change);
+    }
+    else {
+        molesTitrantAdded -=molesAnalyte
+        /*Where I left off Monday*/
+    }
 }
 
 /*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
@@ -44,14 +47,17 @@ var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant
     
     var numSteps = volumeTitrant/step
     
-    for (i=0;i<numSteps;i++){
+    for (i=1;i<numSteps+1;i++){
         volumeTitrant-=step;
         volume += step;
         
-        var molesTitrantAdded = molesTitrant * (i+1) / numSteps;
+        var molesTitrantAdded = molesTitrant * (i) / numSteps;
         var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, Ka);
         
-        dataArray.append([molesTitrantAdded, pH])
+        dataArray.push([i*step, pH])
     }
+    
+    console.log(String(dataArray));
+    return dataArray;
 }
 
