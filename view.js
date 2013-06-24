@@ -65,7 +65,8 @@ function View(div, model, controller){
 	//updates the graph display after more titrant has been added
 	//should be compatible with both drip and undrip
 	var graphpH=function(maxTit, dataArray){
-		dataToGraph = []
+		maxTit = maxTit/1000.0;
+		dataToGraph = [];
 		for(var i=0; i<dataArray.length; i++){
 			if(dataArray[i][0]<=maxTit){
 				dataToGraph.push(dataArray[i])
