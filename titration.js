@@ -17,11 +17,11 @@ var titration=function(){
         var controller=Controller(model);
         var view=View(div, model,controller);
 		var canvas=$('<div class = "output"> <canvas id="graphwindow"></canvas></div>');
-		div.append(canvas);
+		$(div).append(canvas);
 	};
 	
-	return {setup: setup}
-}
+	return {setup: setup};
+}();
 
 $(document).ready(function(){
     $('.titration').each(function(){
