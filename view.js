@@ -1,7 +1,7 @@
-function View(div, model, controller){
-	
 	//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
 	var graphSetup = function(dataArray){
+		$(".graph").remove();
+	
 		var margin = {top: 20, right: 20, bottom: 30, left: 50},
 			width = 960 - margin.left - margin.right,
 			height = 500 - margin.top - margin.bottom;
@@ -25,13 +25,11 @@ function View(div, model, controller){
 		.x(function(d) { return x(d[0]); })
 		.y(function(d) { return y(d[1]); });
 		
-		var svg = d3.select("body").append("svg")
+		var svg = d3.select("body").append("svg").attr("class", "graph")
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
 			.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		
-		console.log(model.dataArray);   
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 		
 		  x.domain(d3.extent(dataArray, function(d) { return d[0]; }));
 		  y.domain(d3.extent(dataArray, function(d) { return d[1]; }));
@@ -75,9 +73,9 @@ function View(div, model, controller){
 			break;
 			}
 		};
-		graphSetup.extendGraph(dataToGraph);
+		graphSetup(dataArray).extendGraph(dataToGraph);
 			
 	};
 	
 	var exports={graphSetup:graphSetup, graphpH:graphpH};
-};
+
