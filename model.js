@@ -1,4 +1,4 @@
-var currentInfo = {“molesTit”:moles, “molesAna”:molesAna, “millilitersTit”:millilitersTit, “millilitersAna”:millilitersAna, "millilitersTotal": “pKa”:pKa, “concTit”:concTit, “concAna”:concAna}
+var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0, "concAna":0}
 
 var convertToMoles = function(volume, concentration){
     var moles = concentraion*volume;
@@ -9,7 +9,7 @@ var findPH = function(concentration){
     return -Math.log(concentration);
 }
 
-var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, pK){
+var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
     
     if (molesAnalyte >= molesTitrantAdded){
         molesAnalyte -= molesTitrantAdded;
@@ -26,7 +26,7 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, pK){
     var concProduct = molesProduct / volume
     var concAnalyte = molesAnalyte / volume
     
-    var change = pKa *concAnalyte/concProduct
+    var change = Ka *concAnalyte/concProduct
     
     var pH = findPH(change)
     
