@@ -1,12 +1,18 @@
 var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0, "concAna":0}
 
+
+
+
 var convertToMoles = function(volume, concentration){
     var moles = concentraion*volume;
     return moles;
 }
 
+
+
+/*findPH converts from concentraion to pH. It uses Math.log, which is base e, so it also uses the log change of base formula to convert to log base 10.*/
 var findPH = function(concentration){
-    return -Math.log(concentration);
+    return -Math.log(concentration)/Math.log(10);
 }
 
 
@@ -44,14 +50,17 @@ var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant
     
     var numSteps = volumeTitrant/step
     
-    for (i=0;i<numSteps;i++){
+    for (i=1;i<numSteps+1;i++){
         volumeTitrant-=step;
         volume += step;
         
-        var molesTitrantAdded = molesTitrant * (i+1) / numSteps;
+        var molesTitrantAdded = molesTitrant * (i) / numSteps;
         var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, Ka);
         
-        dataArray.append([molesTitrantAdded, pH])
+        dataArray.push([i*step, pH])
     }
+    
+    console.log(String(dataArray));
+    return dataArray;
 }
 
