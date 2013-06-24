@@ -1,7 +1,35 @@
-var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0, "concAna":0}
+var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0,
+					"concAna":0, "dripSize":.005, "maxTit":0};
+//I added a variable dripSize to indicate how much titrant we're adding per drip
+//I initialized it to 5 mL --K
+//I also added a variable maxTit for graphing
+//I think we should talk about how to deal with updating this. I think that we should have some way of automatically calculating
+//things like the conc, totalmL, etc. without individually updating these things (because it could be a big mess if we accidentally
+//updated the titrant mL but not the total mL or something. We can cover this tmrw
 
 
 
+//I added this whole section here!
+//controller calls these things a lot, but I didn't mess with the currentInfo array yet
+//(so no automatic updates yet) --K
+
+//adds amount to property value
+var infoAdd = function(property, amount){
+	currentInfo[property] += amount;
+};
+
+//changes the property value to amount
+var infoChange = function(property, amount){
+	currentInfo[property] = amount;
+};
+
+var calculateConcTit = function(moles, volume){
+	moles = parseFloat(moles);
+	volume = parseFloat(volume);
+	return moles/volume;
+};
+
+//end what I added --K
 
 var convertToMoles = function(volume, concentration){
     var moles = concentration*volume;
@@ -9,8 +37,7 @@ var convertToMoles = function(volume, concentration){
 }
 
 
-
-/*findPH converts from concentraion to pH. It uses Math.log, which is base e, so it also uses the log change of base formula to convert to log base 10.*/
+/*findPH converts from concentration to pH. It uses Math.log, which is base e, so it also uses the log change of base formula to convert to log base 10.*/
 var findPH = function(concentration){
     return -Math.log(concentration)/Math.log(10);
 }
@@ -39,6 +66,7 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
 }
 
 /*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
+//I strongly suspect your life will be easier (and my life will be easier!) if you take only currentInfo as the input and redeclare all the variables inside the function
 var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant, Ka, step) {
     var volume = volumeAnalyte
     var molesTitrant = (volumeTitrant*concTitrant);

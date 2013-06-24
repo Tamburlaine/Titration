@@ -49,7 +49,9 @@
 			  .attr("dy", ".71em")
 			  .style("text-anchor", "end")
 			  .text("pH");
-		
+
+		//extendGraph is intended to be called outside of the function
+		//It will add data the data to be graphed to the setup graph
 		var extendGraph = function(data){
 			  svg.append("path")
 			  .datum(data)
