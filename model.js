@@ -1,21 +1,35 @@
+var currentInfo = {“molesTit”:moles, “molesAna”:molesAna, “millilitersTit”:millilitersTit, “millilitersAna”:millilitersAna, "millilitersTotal": “pKa”:pKa, “concTit”:concTit, “concAna”:concAna}
 
-
-var pHCalc = function(molesTitrant, molesAnalyte, volume, pK){
-    
-    
+var convertToMoles = function(volume, concentration){
+    var moles = concentraion*volume;
+    return moles;
 }
 
-var initialPH = function(molesAnalyte, volume, pK){
-    var plusChange = (-pK +Math.sqrt( Math.pow(pK, 2) - 4*pK*molesAnalyte))/(2);
-    var minusChange = (-pK -Math.sqrt( Math.pow(pK, 2) - 4*pK*molesAnalyte))/(2);
-    //plusChange and minusChange are used to find the positive solution to the quadratic equation, since the negative solution is impossible)
-    if (plusChange>0){
-        var change = plusChange;
-    }
-    
-    else{
-        var change = minusChange;   
-    }
-    
-    var pH = -(Math.log(change))
+var findPH = function(concentration){
+    return -Math.log(concentration);
 }
+
+var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, pK){
+    
+    if (molesAnalyte >= molesTitrantAdded){
+        molesAnalyte -= molesTitrantAdded;
+        var molesProduct = molesTitrantAdded;
+        molesTitrantAdded = 0;
+    }
+    
+    else if (molesTitrantAdded> molesAnalyte){
+        molesTitrantAdded -= molesAnalyte;
+        var molesProduct = molesAnalyte;
+        molesAnalyte = 0;
+    }
+        
+    var concProduct = molesProduct / volume
+    var concAnalyte = molesAnalyte / volume
+    
+    var change = pKa *concAnalyte/concProduct
+    
+    var pH = findPH(change)
+    
+    return pH
+}
+
