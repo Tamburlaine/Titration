@@ -10,7 +10,7 @@ var findPH = function(concentration){
 }
 
 
-/* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This wil be fixed later. It is iteratively called in buildData*/
+/* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This will be fixed later. It is iteratively called in buildData*/
 var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
     
     if (molesAnalyte >= molesTitrantAdded){
@@ -34,9 +34,24 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
     
     return pH
 }
-/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the size of 1 drop of titrant*/
+
+/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
 var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant, Ka, step) {
+    var volume = volumeAnalyte
+    var molesTitrant = (volumeTitrant*concTitrant);
     
+    var dataArray = []
     
+    var numSteps = volumeTitrant/step
+    
+    for (i=0;i<numSteps;i++){
+        volumeTitrant-=step;
+        volume += step;
+        
+        var molesTitrantAdded = molesTitrant * (i+1) / numSteps;
+        var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, Ka);
+        
+        dataArray.append([molesTitrantAdded, pH])
+    }
 }
 
