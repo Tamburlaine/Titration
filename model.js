@@ -1,4 +1,4 @@
-var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.1, "litersAna":.1, "litersTotal":.15, "Ka":0.000008, "concTit":.5,
+var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
 "concAna":0, "dripSize":.005, "maxTit":0};
 //I added a variable dripSize to indicate how much titrant we're adding per drip
 //I initialized it to 5 mL --K
@@ -44,8 +44,8 @@ var findPH = function(concentration){
 
 
 /* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This will be fixed later. It is iteratively called in buildData*/
-/*baseAnalyte is an optional argument. If true, the calculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If false, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaults to false.*/
-var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte){
+/*baseAnalyte is an optional argument. If false, the calculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If true, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaults to false.*/
+var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseAnalyte){
     
     if (baseAnalyte === undefined){
         baseAnalyte= false;
@@ -65,11 +65,13 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte){
         var concProduct = molesProduct / volume;
         var concAnalyte = molesAnalyte / volume;
         
-        bufferZonePH(concProduct, concAnalyte, K)
-}
+        var pH = bufferZonePH(concProduct, concAnalyte, K)
+        return pH
     }
+    
+    
     else {
-        dilutionPH(molesTitrantAdded
+        var pH = dilutionPH(molesTitrantAdded, molesAnalyte, eqPoint, volume)
     }
     if (baseAnalyte == true){
         pH = 14-pH;
@@ -92,6 +94,8 @@ var buildData = function(currentInfo,baseAnalyte) {
     var volume = volumeAnalyte
     var molesTitrant = (volumeTitrant*concTitrant);
     
+    var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)
+    
     var dataArray = []
     
     var numSteps = volumeTitrant/step
@@ -101,7 +105,7 @@ var buildData = function(currentInfo,baseAnalyte) {
         volume += step;
         
         var molesTitrantAdded = molesTitrant * (i) / numSteps;
-        var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte);
+        var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseAnalyte);
         
         dataArray.push([i*step, pH])
     }
@@ -112,16 +116,17 @@ var buildData = function(currentInfo,baseAnalyte) {
 
 
 var initialPH = function(conc, k){
-    var pH = .5*(findPH(conc))
+    var pH = .5*(findPH(conc*k))
     //Uses concentrated weak acid assumption to find pH at start
     return pH
 }
 
 var bufferZonePH = function(concProduct, concAnalyte, K){
     
-    var change = K*concProduct/Conc;
+    var change = K*concAnalyte/concProduct;
     var pH = findPH(change);
     //Uses 5% asumption to solve for change
+    return pH;
 }
 
 var equivalencePH = function(concProduct, K){
@@ -129,18 +134,20 @@ var equivalencePH = function(concProduct, K){
     //converts Ka to Kb, and vice versa
      var pOH = .5*findPH(oppositeK/concProduct)
      //Uses concentrated weak base asummption
-     var ph = 14- pOH
+     var pH= 14- pOH
      return pH
 }
 
 var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePH, volume){
     
-    var intialHConc = Math.pow(10, -equivalencePH);
-    var molesH = initialHConc * volume;
+    var initialOHConc = Math.pow(10, -(14-equivalencePH));
+    var molesOH = initialOHConc * volume;
     var excessTitrant = molesTitrantAdded - molesAnalyte
-    molesH += excessTitrant;
-    var newHConc = molesH/volume;
-    var pH = findPH(newHConc)
+    molesOH += excessTitrant;
+    var newOHConc = molesOH/volume;
+    var pOH = findPH(newOHConc)
+    var pH = 14-pOH;
+    return pH;
 }
 
 var calculateEqPoint = function( molesAnalyte, volumeAnalyte, concTitrant, K) {
