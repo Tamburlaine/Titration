@@ -1,5 +1,5 @@
-var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0,
-					"concAna":0, "dripSize":.005, "maxTit":0};
+var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.1, "litersAna":.1, "litersTotal":.15, "Ka":0.000008, "concTit":.5,
+"concAna":0, "dripSize":.005, "maxTit":0};
 //I added a variable dripSize to indicate how much titrant we're adding per drip
 //I initialized it to 5 mL --K
 //I also added a variable maxTit for graphing
@@ -44,32 +44,32 @@ var findPH = function(concentration){
 
 
 /* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This will be fixed later. It is iteratively called in buildData*/
-/*baseAnalyte is an optional argument. If false, the claculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If true, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaultds to false.*/
-var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte=false){
+/*baseAnalyte is an optional argument. If true, the calculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If false, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaults to false.*/
+var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte){
     
+    if (baseAnalyte === undefined){
+        baseAnalyte= false;
+    }
     
-    if (molesAnalyte >= molesTitrantAdded){
+    /*Calculates pH at the initial state, when nothing has been added.*/
+    if (molesTitrantAdded == 0){
+        var concAnalyte = molesAnalyte / volume;
+        var pH = initialPH(concAnalyte, K)
+    }
+    
+    else if (molesAnalyte > molesTitrantAdded){
         molesAnalyte -= molesTitrantAdded;
         var molesProduct = molesTitrantAdded;
-        molesTitrantAdded = 0;
     
         
         var concProduct = molesProduct / volume;
         var concAnalyte = molesAnalyte / volume;
         
-        var change = K*concAnalyte/concProduct;
-        
-        var pH = findPH(change);
+        bufferZonePH(concProduct, concAnalyte, K)
+}
     }
     else {
-        molesTitrantAdded -=molesAnalyte;
-        molesAnalyte = 0;
-        var molesProduct = molesAnalyte;
-        
-        var concProduct = molesProduct/volume;
-        var concTitrant = molesTitrant/volume;
-        
-        change 
+        dilutionPH(molesTitrantAdded
     }
     if (baseAnalyte == true){
         pH = 14-pH;
@@ -79,8 +79,16 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte=fa
 }
 
 /*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
-//I strongly suspect your life will be easier (and my life will be easier!) if you take only currentInfo as the input and redeclare all the variables inside the function
-var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant, Ka, step) {
+var buildData = function(currentInfo,baseAnalyte) {
+    
+    var molesAnalyte = currentInfo['molesAna'];
+    var volumeAnalyte = currentInfo['litersAna'];
+    var concTitrant = currentInfo['concTit']
+    var volumeTitrant = currentInfo['litersTit']
+    var K = currentInfo['Ka']
+    var step = currentInfo['dripSize']
+    //Variable assignment from current info
+    
     var volume = volumeAnalyte
     var molesTitrant = (volumeTitrant*concTitrant);
     
@@ -88,12 +96,12 @@ var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant
     
     var numSteps = volumeTitrant/step
     
-    for (i=1;i<numSteps+1;i++){
+    for (i=0;i<numSteps+1;i++){
         volumeTitrant-=step;
         volume += step;
         
         var molesTitrantAdded = molesTitrant * (i) / numSteps;
-        var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, Ka);
+        var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, K, baseAnalyte);
         
         dataArray.push([i*step, pH])
     }
@@ -102,3 +110,43 @@ var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant
     return dataArray;
 }
 
+
+var initialPH = function(conc, k){
+    var pH = .5*(findPH(conc))
+    //Uses concentrated weak acid assumption to find pH at start
+    return pH
+}
+
+var bufferZonePH = function(concProduct, concAnalyte, K){
+    
+    var change = K*concProduct/Conc;
+    var pH = findPH(change);
+    //Uses 5% asumption to solve for change
+}
+
+var equivalencePH = function(concProduct, K){
+     var oppositeK = Math.pow(10, -14)/K
+    //converts Ka to Kb, and vice versa
+     var pOH = .5*findPH(oppositeK/concProduct)
+     //Uses concentrated weak base asummption
+     var ph = 14- pOH
+     return pH
+}
+
+var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePH, volume){
+    
+    var intialHConc = Math.pow(10, -equivalencePH);
+    var molesH = initialHConc * volume;
+    var excessTitrant = molesTitrantAdded - molesAnalyte
+    molesH += excessTitrant;
+    var newHConc = molesH/volume;
+    var pH = findPH(newHConc)
+}
+
+var calculateEqPoint = function( molesAnalyte, volumeAnalyte, concTitrant, K) {
+    var volumeTitrantNeeded = molesAnalyte/concTitrant;
+    var newVolume = volumeAnalyte + volumeTitrantNeeded;
+    var concProduct = molesAnalyte/newVolume;
+    var pH = equivalencePH(concProduct, K)
+    return pH;
+}
