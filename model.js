@@ -1,7 +1,7 @@
 var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
-"concAna":0, "dripSize":.005, "maxTit":0};
+"concAna":0, "dripSize":.001, "maxTit":0};
 //I added a variable dripSize to indicate how much titrant we're adding per drip
-//I initialized it to 5 mL --K
+//I initialized it to 5 mL --K //Moved it down tp 1 ml for graphing purposes.
 //I also added a variable maxTit for graphing
 //I think we should talk about how to deal with updating this. I think that we should have some way of automatically calculating
 //things like the conc, totalmL, etc. without individually updating these things (because it could be a big mess if we accidentally
@@ -81,7 +81,7 @@ var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseA
 }
 
 /*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
-var buildData = function(currentInfo,baseAnalyte) {
+var buildData = function(baseAnalyte) {
     
     var molesAnalyte = currentInfo['molesAna'];
     var volumeAnalyte = currentInfo['litersAna'];
@@ -138,10 +138,12 @@ var equivalencePH = function(concProduct, K){
      return pH
 }
 
-var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePH, volume){
+var dilutionPH = function(molesTitrantAdded, molesAnalyte, eqPoint, volume){
     
+    var equivalencePH = eqPoint[0];
+    var eqVolume = eqPoint[1];
     var initialOHConc = Math.pow(10, -(14-equivalencePH));
-    var molesOH = initialOHConc * volume;
+    var molesOH = initialOHConc * eqVolume;
     var excessTitrant = molesTitrantAdded - molesAnalyte
     molesOH += excessTitrant;
     var newOHConc = molesOH/volume;
@@ -155,5 +157,5 @@ var calculateEqPoint = function( molesAnalyte, volumeAnalyte, concTitrant, K) {
     var newVolume = volumeAnalyte + volumeTitrantNeeded;
     var concProduct = molesAnalyte/newVolume;
     var pH = equivalencePH(concProduct, K)
-    return pH;
+    return [pH, volumeTitrantNeeded];
 }
