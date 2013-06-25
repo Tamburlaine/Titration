@@ -178,7 +178,7 @@ var titration=(function(){
 		//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
 		var graphSetup = function(){
 			dataArray=model.currentInfo["dataArray"];
-			console.log("dataArray is " + dataArray);
+			console.log("dataArray is " + dataArray, "currentInfo is "+ model.currentInfo+"dA "+ model.currentInfo["dataArray"]);
 			$(".graph").remove();
 		
 			var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -278,12 +278,9 @@ var titration=(function(){
 		div.append(sliderDiv);
 		
 		var model=Model();
-		dataArray = model.currentInfo["dataArray"];
-		console.log("dataArra " + dataArray);
-		console.log(model.currentInfo);
+		var dataArray = model.currentInfo["dataArray"];
         var controller=Controller(model);
         var view=View(div, model,controller);
-		console.log(view, model);
 		view.graphSetup(dataArray);
 		
 		
