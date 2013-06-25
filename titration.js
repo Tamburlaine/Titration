@@ -3,6 +3,7 @@ var titration=(function(){
 	function Model(div){
 		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
 		"concAna":0, "dripSize":.005, "maxTit":0, "dataArray":[]};
+		console.log("model data array" + currentInfo["dataArray"]);
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -271,20 +272,25 @@ var titration=(function(){
 		var undrip = $("<button class='undrip'>Undrip</button>");
 		var dump = $("<div><button class='dump'>Full Titration</button></div>");
 		// var slider = $("<div class='sliderDiv'></div>")
-		var sliderDiv = $('<div id="slider-vertical" style="height: 200px;"></div>');
+		var sliderDiv = $('<div class="slider-vertical" id="pKa" style="height: 200px;"></div>');
+		var sliderDiv2 = $('<div class="slider-vertical" id="molesAna" style="height: 200px;"></div>');
+		var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"></div>');
+		var sliderDiv4 = $('<div class="slider-vertical" id="concTitrant" style="height: 200px;"></div>');
+		var sliderDiv5 = $('<div class="slider-vertical" id="dripSize" style="height: 200px;"></div>');
 		buttonDiv.append(drip, undrip, dump);
 		
 		div.append(buttonDiv);
-		div.append(sliderDiv);
+		div.append(sliderDiv, sliderDiv2, sliderDiv3, sliderDiv4, sliderDiv5);
 		
 		var model=Model();
 		var dataArray = model.currentInfo["dataArray"];
         var controller=Controller(model);
         var view=View(div, model,controller);
+
 		view.graphSetup(dataArray);
 		
 		
-		// $(".sliderDiv").slider()
+		// $(".Div").slider()
 
 		// $(".slider").data("data-slider-orientation", "vertical");
 		//now I'm binding functions to the buttons
@@ -294,14 +300,14 @@ var titration=(function(){
 			dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
 			model.infoAdd("maxTit", dripSize);
-			view.graphpH(model.currentInfo["maxTit"], model.currentInfo["dataArray"]);
+			view.graphpH();
 		};
 		
 		$(".undrip").onclick=function(){
 			dripSize=model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", -dripSize);
 			model.infoAdd("maxTit", -dripSize);
-			view.graphpH(model.currentInfo["maxTit"], model.currentInfo["dataArray"]);
+			view.graphpH();
 		};
 		
 		$(".dump").onclick=function(){
@@ -310,11 +316,11 @@ var titration=(function(){
 			newMax = DA[DALen-1][0];
 			model.infoChange("maxTit", newMax);
 			model.infoChange("millilitersTit", newMax);
-			view.graphPH(newMax, DA);
+			view.graphPH();
 		};
 		
 		  $(function() {
-    $( "#slider-vertical" ).slider({
+    $( "#pKa" ).slider({
       orientation: "vertical",
       range: "min",
       min: 12,
@@ -332,12 +338,124 @@ var titration=(function(){
 		console.log("butts: " + ui.value);
       }
     }).on('slide', function(event, ui){
-		model.infoChange("Ka", ui.value);
-		console.log(ui.value);
-		view.graphpH(model.currentInfo["maxTit"], model.currentInfo["dataArray"]);
+		console.log(newval);
+		model.infoChange("Ka", newval);
+		view.graphpH();
 	});
+	
+	
     //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
   });
+  
+  		  $(function() {
+    $( "#molesAna" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: 0,
+      max: 10,
+      value: 1,
+	  step: .01,
+	  value: 0,
+	  handle: "square",
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+		console.log("butts: " + ui.value);
+      }
+    }).on('slide', function(event, ui){
+		console.log(newval);
+		model.infoChange("molesAna", newval);
+		view.graphpH();
+	});
+	
+	
+    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  });
+  
+  		  $(function() {
+    $( "#litersAna" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: 12,
+      max: -12,
+      value: 12,
+	  step: .01,
+	  value: 0,
+	  formater: function(val){
+		newval = Math.pow(10, -val);
+		return newval;
+	  },
+	  handle: "square",
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+		console.log("butts: " + ui.value);
+      }
+    }).on('slide', function(event, ui){
+		console.log(newval);
+		model.infoChange("Ka", newval);
+		view.graphpH();
+	});
+	
+	
+    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  });
+  
+  		  $(function() {
+    $( "#concTitrant" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: 12,
+      max: -12,
+      value: 12,
+	  step: .01,
+	  value: 0,
+	  formater: function(val){
+		newval = Math.pow(10, -val);
+		return newval;
+	  },
+	  handle: "square",
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+		console.log("butts: " + ui.value);
+      }
+    }).on('slide', function(event, ui){
+		console.log(newval);
+		model.infoChange("Ka", newval);
+		view.graphpH();
+	});
+	
+	
+    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  });
+  
+  		  $(function() {
+    $( "#dripSize" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: 12,
+      max: -12,
+      value: 12,
+	  step: .01,
+	  value: 0,
+	  formater: function(val){
+		newval = Math.pow(10, -val);
+		return newval;
+	  },
+	  handle: "square",
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+		console.log("butts: " + ui.value);
+      }
+    }).on('slide', function(event, ui){
+		console.log(newval);
+		model.infoChange("Ka", newval);
+		view.graphpH();
+	});
+	
+	
+    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  });
+  
+
 	};
 	
 	return {setup: setup};
