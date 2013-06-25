@@ -1,8 +1,8 @@
-var titration=function(){
+var titration=(function(){
 	
 	function Model(div){
-		var currentInfo = {"molesTit":0, "molesAna":0, "millilitersTit":0, "millilitersAna":0, "millilitersTotal":0, "Ka":0, "concTit":0,
-							"concAna":0, "dripSize":.005, "maxTit":0, "dataArray":[]};
+		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
+		"concAna":0, "dripSize":.005, "maxTit":0, "dataArray":[]};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -10,9 +10,7 @@ var titration=function(){
 		//things like the conc, totalmL, etc. without individually updating these things (because it could be a big mess if we accidentally
 		//updated the titrant mL but not the total mL or something. We can cover this tmrw
 
-		exports = {};
 
-		exports[currentInfo] = currentInfo;
 
 		//I added this whole section here!
 		//controller calls these things a lot, but I didn't mess with the currentInfo array yet
@@ -28,19 +26,11 @@ var titration=function(){
 			currentInfo[property] = amount;
 		};
 
-		var infoGet = function(property){
-			return currentInfo[property];
-		}
-
 		var calculateConcTit = function(moles, volume){
 			moles = parseFloat(moles);
 			volume = parseFloat(volume);
 			return moles/volume;
 		};
-		exports[infoAdd]=infoAdd;
-		exports[infoChange]=infoChange;
-		exports[infoGet]=infoGet;
-		exports[calculateConcTit]=calculateConcTit;
 
 		//end what I added --K
 
@@ -49,62 +39,135 @@ var titration=function(){
 			return moles;
 		}
 
-		exports[convertToMoles]=convertToMoles
 
 		/*findPH converts from concentration to pH. It uses Math.log, which is base e, so it also uses the log change of base formula to convert to log base 10.*/
 		var findPH = function(concentration){
 			return -Math.log(concentration)/Math.log(10);
 		}
 
-		exports[findPH]=findPH;
+
 		/* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This will be fixed later. It is iteratively called in buildData*/
-		var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, Ka){
+		/*baseAnalyte is an optional argument. If false, the calculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If true, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaults to false.*/
+		var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseAnalyte){
 			
-			if (molesAnalyte >= molesTitrantAdded){
+			if (baseAnalyte === undefined){
+				baseAnalyte= false;
+			}
+			
+			/*Calculates pH at the initial state, when nothing has been added.*/
+			if (molesTitrantAdded == 0){
+				var concAnalyte = molesAnalyte / volume;
+				var pH = initialPH(concAnalyte, K)
+			}
+			
+			else if (molesAnalyte > molesTitrantAdded){
 				molesAnalyte -= molesTitrantAdded;
 				var molesProduct = molesTitrantAdded;
-				molesTitrantAdded = 0;
 			
 				
 				var concProduct = molesProduct / volume;
 				var concAnalyte = molesAnalyte / volume;
 				
-				var change = Ka*concAnalyte/concProduct;
-				
-				var pH = findPH(change);
+				var pH = bufferZonePH(concProduct, concAnalyte, K)
+				return pH
 			}
+			
+			
 			else {
-				molesTitrantAdded -=molesAnalyte
-				/*Where I left off Monday*/
+				var pH = dilutionPH(molesTitrantAdded, molesAnalyte, eqPoint, volume)
 			}
+			if (baseAnalyte == true){
+				pH = 14-pH;
+			}
+			return pH;
+			
 		}
 
-		exports[pHCalc]=pHCalc;
 		/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
-		//I strongly suspect your life will be easier (and my life will be easier!) if you take only currentInfo as the input and redeclare all the variables inside the function
-		var buildData = function(molesAnalyte, volumeAnalyte, concTitrant, volumeTitrant, Ka, step) {
+		var buildData = function(baseAnalyte) {
+			
+			var molesAnalyte = currentInfo['molesAna'];
+			var volumeAnalyte = currentInfo['litersAna'];
+			var concTitrant = currentInfo['concTit']
+			var volumeTitrant = currentInfo['litersTit']
+			var K = currentInfo['Ka']
+			var step = currentInfo['dripSize']
+			//Variable assignment from current info
+			
 			var volume = volumeAnalyte
 			var molesTitrant = (volumeTitrant*concTitrant);
+			
+			var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)
 			
 			var dataArray = []
 			
 			var numSteps = volumeTitrant/step
 			
-			for (i=1;i<numSteps+1;i++){
+			for (i=0;i<numSteps+1;i++){
 				volumeTitrant-=step;
 				volume += step;
 				
 				var molesTitrantAdded = molesTitrant * (i) / numSteps;
-				var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, Ka);
+				var pH = pHCalc(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseAnalyte);
 				
 				dataArray.push([i*step, pH])
 			}
 			
 			console.log(String(dataArray));
+			
+			infoChange("dataArray", dataArray);
+			
 			return dataArray;
 		}
 
-		exports[buildData]=buildData;
+
+		var initialPH = function(conc, k){
+			var pH = .5*(findPH(conc*k))
+			//Uses concentrated weak acid assumption to find pH at start
+			return pH
+		}
+
+		var bufferZonePH = function(concProduct, concAnalyte, K){
+			
+			var change = K*concAnalyte/concProduct;
+			var pH = findPH(change);
+			//Uses 5% asumption to solve for change
+			return pH;
+		}
+
+		var equivalencePH = function(concProduct, K){
+			 var oppositeK = Math.pow(10, -14)/K
+			//converts Ka to Kb, and vice versa
+			 var pOH = .5*findPH(oppositeK/concProduct)
+			 //Uses concentrated weak base asummption
+			 var pH= 14- pOH
+			 return pH
+		}
+
+		var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePH, volume){
+			
+			var initialOHConc = Math.pow(10, -(14-equivalencePH));
+			var molesOH = initialOHConc * volume;
+			var excessTitrant = molesTitrantAdded - molesAnalyte
+			molesOH += excessTitrant;
+			var newOHConc = molesOH/volume;
+			var pOH = findPH(newOHConc)
+			var pH = 14-pOH;
+			return pH;
+		}
+
+		var calculateEqPoint = function( molesAnalyte, volumeAnalyte, concTitrant, K) {
+			var volumeTitrantNeeded = molesAnalyte/concTitrant;
+			var newVolume = volumeAnalyte + volumeTitrantNeeded;
+			var concProduct = molesAnalyte/newVolume;
+			var pH = equivalencePH(concProduct, K)
+			return pH;
+		}
+		exports={"currentInfo":currentInfo, "infoAdd":infoAdd, "infoChange":infoChange, "calculateConcTit":calculateConcTit, "convertToMoles":convertToMoles,
+		"findPH":findPH, "pHCalc":pHCalc, "buildData":buildData, "initialPH":initialPH, "bufferZonePH":bufferZonePH, "equivalencePH":equivalencePH,
+		"dilutionPH":dilutionPH, "calculateEqPoint":calculateEqPoint};
+		
+		return exports;
 	};
 	
 	function Controller(model){
@@ -113,7 +176,9 @@ var titration=function(){
 	
 	function View(div, model, controller){
 		//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
-		var graphSetup = function(dataArray){
+		var graphSetup = function(){
+			dataArray=model.currentInfo["dataArray"];
+			console.log("dataArray is " + dataArray);
 			$(".graph").remove();
 		
 			var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -178,7 +243,9 @@ var titration=function(){
 			
 		//updates the graph display after more titrant has been added
 		//should be compatible with both drip and undrip
-		var graphpH=function(maxTit, dataArray){
+		var graphpH=function(){
+			maxTit=model.currentInfo["maxTit"];
+			dataArray=model.currentInfo["dataArray"];
 			maxTit = maxTit*1000.0;
 			dataToGraph = [];
 			for(var i=0; i<dataArray.length; i++){
@@ -195,7 +262,7 @@ var titration=function(){
 		
 		var exports={graphSetup:graphSetup, graphpH:graphpH};
 
-
+		return exports;
 	};
 	
 	function setup(div){		
@@ -211,9 +278,13 @@ var titration=function(){
 		div.append(sliderDiv);
 		
 		var model=Model();
+		dataArray = model.currentInfo["dataArray"];
+		console.log("dataArra " + dataArray);
+		console.log(model.currentInfo);
         var controller=Controller(model);
         var view=View(div, model,controller);
-		//view.graphSetup();
+		console.log(view, model);
+		view.graphSetup(dataArray);
 		
 		
 		// $(".sliderDiv").slider()
@@ -273,7 +344,7 @@ var titration=function(){
 	};
 	
 	return {setup: setup};
-}();
+}());
 
 $(document).ready(function(){
     $('.titration').each(function(){
