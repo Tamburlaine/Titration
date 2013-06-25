@@ -14,3 +14,9 @@ body {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
+
+.sliderDiv{
+	position: relative;
+	top: 200px;
+	left: 200px;
+}
