@@ -26,12 +26,30 @@ var titration=function(){
 		view.graphSetup();
 		
 		//now I'm binding functions to the buttons
+		//we need to figure out when they stop clicking the titration button (it might get a little nasty if
+		//we keep increasing maxTit when the data array only extends so far)
 		$(".drip").onclick = function(){
 			dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
 			model.infoAdd("maxTit", dripSize);
-			view.graphpH()
+			view.graphpH(model.currentInfo["maxTit"], model.currentInfo["dataArray"]);
 		};
+		
+		$(".undrip").onclick=function(){
+			dripSize=model.currentInfo["dripSize"];
+			model.infoAdd("millilitersTit", -dripSize);
+			model.infoAdd("maxTit", -dripSize);
+			view.graphpH(model.currentInfo["maxTit"], model.currentInfo["dataArray"]);
+		};
+		
+		$(".dump").onclick=function(){
+			DA = model.currentInfo["dataArray"];
+			DALen = model.currentInfo["dataArray"].length;
+			newMax = DA[DALen-1][0];
+			model.infoChange("maxTit", newMax);
+			model.infoChange("millilitersTit", newMax);
+			view.graphPH(newMax, DA);
+		}
 	};
 	
 	return {setup: setup};
