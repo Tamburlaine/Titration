@@ -2,6 +2,20 @@ body {
   font: 10px sans-serif;
 }
 
+.titration {
+	height: 620px;
+	width: 650px;
+	background-color: #cccccc;
+	border-radius: 15px;
+}
+
+.beakerDiv{
+	height: 160px;
+	width: 100px;
+}
+
+.slideDiv{height: 400px; width: 240px; position:relative; top:-150px; left:350px;}
+
 .axis path,
 .axis line {
   fill: none;
@@ -11,12 +25,39 @@ body {
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: #4b6d96;
   stroke-width: 1.5px;
 }
 
-.sliderDiv{
+.buttonDiv{
 	position: relative;
-	top: 200px;
 	left: 200px;
+	top: -560px;
+	width: 150px;
+}
+
+.graph{
+	position: relative;
+	top: -400px;
+	left: -20px;
+}
+
+.button {
+	width: 120px;
+	margin-top: 20px;
+  border-radius: 15px;
+  background-color: hsl(214, 37%, 52%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ced9e8", endColorstr="#577eb1");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#ced9e8), to(#577eb1));
+  background-image: -moz-linear-gradient(top, #ced9e8, #577eb1);
+  background-image: -ms-linear-gradient(top, #ced9e8, #577eb1);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ced9e8), color-stop(100%, #577eb1));
+  background-image: -webkit-linear-gradient(top, #ced9e8, #577eb1);
+  background-image: -o-linear-gradient(top, #ced9e8, #577eb1);
+  background-image: linear-gradient(#ced9e8, #577eb1);
+  border-color: #577eb1 #577eb1 hsl(214, 37%, 43.5%);
+  color: #333 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.56);
+  -webkit-font-smoothing: antialiased;
 }

@@ -179,8 +179,8 @@ var titration=(function(){
 			$(".graph").remove();
 		
 			var margin = {top: 20, right: 20, bottom: 30, left: 50},
-				width = 960 - margin.left - margin.right,
-				height = 500 - margin.top - margin.bottom;
+				width = 650 - margin.left - margin.right,
+				height = 400 - margin.top - margin.bottom;
 			
 			
 			var x = d3.scale.linear()
@@ -261,22 +261,24 @@ var titration=(function(){
 		return exports;
 	};
 	
-	function setup(div){		
+	function setup(div){
+		var beakerDiv=$("<div class='beakerDiv'></div>")
 		var buttonDiv = $("<div class='buttonDiv'></div>");
-		var drip = $("<button class='drip'>Drip</button>");
-		var undrip = $("<button class='undrip'>Undrip</button>");
-		var dump = $("<div><button class='dump'>Full Titration</button></div>");
-		var clear=$("<div><button class='clear'>Clear</button></div>")
+		var slideDiv=$("<div class ='slideDiv'></div>");
+		var drip = $("<button class='button drip'>Drip</button>");
+		var undrip = $("<button class='button undrip'>Undrip</button>");
+		var dump = $("<div><button class='button dump'>Full Titration</button></div>");
+		var clear=$("<div><button class='button clear'>Clear</button></div>")
 		// var slider = $("<div class='sliderDiv'></div>")
-		var sliderDiv = $('<div class="slider-vertical" id="pKa" style="height: 200px;"><div class="slabel">pKa</div></div>');
-		var sliderDiv2 = $('<div class="slider-vertical" id="molesAna" style="height: 200px;"><div class="slabel">moles Analyte</div></div>');
+		var sliderDiv = $('<div><div class="slider" id="pKa" style="width: 200px;"></div><div class="slabel">pKa</div></div>');
+		var sliderDiv2 = $('<div class="slider" id="molesAna" style="width: 200px;"><div class="slabel">Moles Analyte</div></div>');
 		//var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
-		var sliderDiv4 = $('<div class="slider-vertical" id="concTitrant" style="height: 200px;"><div class="slabel">conc titrant</div></div>');
-		var sliderDiv5 = $('<div class="slider-vertical" id="dripSize" style="height: 200px;"><div class="slabel">Drip Size</div></div>');
+		var sliderDiv4 = $('<div class="slider" id="concTitrant" style="width: 200px;"><div class="slabel">Titrant Concentration (Mol/L)</div></div>');
+		var sliderDiv5 = $('<div class="slider" id="dripSize" style="width: 200px;"><div class="slabel">Drip Size (mL)</div></div>');
 		buttonDiv.append(drip, undrip, dump, clear);
 		
-		div.append(buttonDiv);
-		div.append(sliderDiv, sliderDiv2, sliderDiv4, sliderDiv5);
+		slideDiv.append(sliderDiv, sliderDiv2, sliderDiv4, sliderDiv5);
+		div.append(beakerDiv, slideDiv, buttonDiv);
 		
 		var model=Model();
 		var dataArray = model.currentInfo["dataArray"];
@@ -324,13 +326,11 @@ var titration=(function(){
 		});
 		
     $( "#pKa" ).slider({
-      orientation: "vertical",
       range: "min",
-      min: 12,
-      max: -12,
-      value: 12,
+      min: 8,
+      max: -2,
+      value: 3,
 	  step: .01,
-	  value: 0,
 	  formater: function(pKa){
 		pKa = Math.round(pKa*1000)/1000;
 		Ka = Math.pow(10, -pKa);
@@ -342,20 +342,19 @@ var titration=(function(){
 		
 		return pKa;
 	  },
-	  handle: "square",
+	  handle: "round",
     }).on('slide', function(event, ui){
 		model.buildData();
 		view.graphpH();
 	});
   
     $( "#molesAna" ).slider({
-      orientation: "vertical",
       range: "min",
       min: .01,
       max: 2,
       value: .1,
 	  step: .01,
-	  handle: "square",
+	  handle: "round",
 	  formater: function(val){
 		val=Math.round(val*100)/100;
 		model.infoChange("molesAna", val);
@@ -373,7 +372,7 @@ var titration=(function(){
       // max: 20,
       // value: 1,
 	  // step: .1,
-	  // handle: "square",
+	  // handle: "round",
 	  // formater: function(val){
 		// val=Math.round(val*10)/10;
 		// model.infoChange("litersAna", val);
@@ -386,13 +385,12 @@ var titration=(function(){
 	
   
     $( "#concTitrant" ).slider({
-      orientation: "vertical",
       range: "min",
       min: 0,
       max: 10,
       value: .5,
 	  step: .01,
-	  handle: "square",
+	  handle: "round",
 	  formater: function(val){
 		val = Math.round(val*100)/100;
 		model.infoChange("concTit", val);
@@ -404,12 +402,11 @@ var titration=(function(){
 	});
   
     $( "#dripSize" ).slider({
-      orientation: "vertical",
       min: .005,
       max: .0001,
       value: .0001,
 	  step: .0001,
-	  handle: "square",
+	  handle: "round",
 	  //this alters the dripsize in liters
 	  //also changes the currentInfo to the new dripval in liters
 	  //but displays the drip size in mL
