@@ -1,0 +1,33 @@
+.beaker{
+    height:150px;
+    width:150px;
+    position:relative;
+    
+}
+
+.red{
+    position:absolute;
+
+    width:100%;
+    top:82px;
+    left:0px;
+    
+}
+
+.blue{
+    position:absolute;
+    width:100%;
+    top:82px;
+    left:0px;
+}
+
+.beakerTop{
+/*
+    width:100%;
+    height:100%;
+*/
+    position:absolute;
+    left:24px;
+    
+    
+}

@@ -1,29 +1,31 @@
 var pHtoColor = function(pH){
-    var red = 0
-    var green = 0 
+    var red = 0 
     var blue = 0
     if (pH<=5){
-        red = 200
+        red = 1
         blue = 0
         
     }
     else if ( (5<pH) && (pH<9)){
-        blue = parseInt((pH-5)*50);
-        red = parseInt(200 -  blue);
+        blue =(pH-5) /4
+        red = 1-blue
     }
     else if (pH>=9){
-        blue = 200
+        blue = 1
         red = 0
     }
-    var color = 'background-color:rgb('+String(red)+','+String(green)+','+ String(blue) +')';
-    return color;
+    $('.red').attr('style','opacity:'+red)
+    $('.blue').attr('style','opacity:'+blue)
 }
 
-var pH = 5.3
-var setupBeaker = function () {
-    var color = pHtoColor(pH)
-    $('.beaker').append("<img src='http://www.clker.com/cliparts/Q/K/x/q/i/P/empty-erlenmeyer-flask-hi.png' class = 'beakerPic'>").attr('style', color)
+var setupBeaker = function (div) {
+    $(div).append("<img src=rsz_beakertop.png class='beakerTop'>")
+    .append("<img src=rsz_beakercontents.png class='red'>")
+    .append("<img src=rsz_beakercontentsblue.png class='blue'>")
     
 }
 
-$(document).ready(setupBeaker())
+$(document).ready(function(){
+    $('.beaker').each(function(){
+        setupBeaker($(this));});
+});

@@ -1,6 +1,5 @@
 function Model(div){
-		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
-		"concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[]};
+		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -67,7 +66,6 @@ function Model(div){
 				var concAnalyte = molesAnalyte / volume;
 				
 				var pH = bufferZonePH(concProduct, concAnalyte, K)
-				return pH
 			}
 			
 			
@@ -77,6 +75,7 @@ function Model(div){
 			if (baseAnalyte == true){
 				pH = 14-pH;
 			}
+            infoChange('pH', pH)
 			return pH;
 			
 		}
