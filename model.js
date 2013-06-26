@@ -101,7 +101,7 @@ function Model(div){
 			
 			var numSteps = volumeTitrant/step
 			
-			for (i=0;i<numSteps+1;i++){
+			for (i=1;i<numSteps+1;i++){
 				volumeTitrant-=step;
 				volume += step;
 				
