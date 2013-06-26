@@ -2,7 +2,7 @@ var titration=(function(){
 	
 	function Model(div){
 		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
-		"concAna":0, "dripSize":.005, "maxTit":500, "dataArray":[]};
+		"concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[]};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -243,7 +243,6 @@ var titration=(function(){
 		var graphpH=function(){
 			maxTit=model.currentInfo["maxTit"];
 			dataArray=model.currentInfo["dataArray"];
-			maxTit = maxTit*1000.0;
 			dataToGraph = [];
 			for(var i=0; i<dataArray.length; i++){
 				if(dataArray[i][0]<=maxTit){
@@ -267,16 +266,17 @@ var titration=(function(){
 		var drip = $("<button class='drip'>Drip</button>");
 		var undrip = $("<button class='undrip'>Undrip</button>");
 		var dump = $("<div><button class='dump'>Full Titration</button></div>");
+		var clear=$("<div><button class='clear'>Clear</button></div>")
 		// var slider = $("<div class='sliderDiv'></div>")
 		var sliderDiv = $('<div class="slider-vertical" id="pKa" style="height: 200px;"><div class="slabel">Ka</div></div>');
 		var sliderDiv2 = $('<div class="slider-vertical" id="molesAna" style="height: 200px;"><div class="slabel">moles Analyte</div></div>');
-		var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
+		//var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
 		var sliderDiv4 = $('<div class="slider-vertical" id="concTitrant" style="height: 200px;"><div class="slabel">conc titrant</div></div>');
 		var sliderDiv5 = $('<div class="slider-vertical" id="dripSize" style="height: 200px;"><div class="slabel">Drip Size</div></div>');
-		buttonDiv.append(drip, undrip, dump);
+		buttonDiv.append(drip, undrip, dump, clear);
 		
 		div.append(buttonDiv);
-		div.append(sliderDiv, sliderDiv2, sliderDiv3, sliderDiv4, sliderDiv5);
+		div.append(sliderDiv, sliderDiv2, sliderDiv4, sliderDiv5);
 		
 		var model=Model();
 		var dataArray = model.currentInfo["dataArray"];
@@ -292,28 +292,36 @@ var titration=(function(){
 		//now I'm binding functions to the buttons
 		//we need to figure out when they stop clicking the titration button (it might get a little nasty if
 		//we keep increasing maxTit when the data array only extends so far)
-		$(".drip").onclick = function(){
+		$(".drip").click(function(){
+			console.log("butts");
 			dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
 			model.infoAdd("maxTit", dripSize);
 			view.graphpH();
-		};
+		});
 		
-		$(".undrip").onclick=function(){
+		$(".undrip").click(function(){
 			dripSize=model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", -dripSize);
 			model.infoAdd("maxTit", -dripSize);
 			view.graphpH();
-		};
+		});
 		
-		$(".dump").onclick=function(){
+		$(".dump").click(function(){
 			DA = model.currentInfo["dataArray"];
 			DALen = model.currentInfo["dataArray"].length;
 			newMax = DA[DALen-1][0];
 			model.infoChange("maxTit", newMax);
 			model.infoChange("millilitersTit", newMax);
-			view.graphPH();
-		};
+			view.graphpH();
+		});
+		
+		$(".clear").click(function(){
+			console.log("clear");
+			model.infoChange("maxTit", 0);
+			console.log(model.currentInfo["maxTit"]);
+			view.graphpH();
+		});
 		
     $( "#pKa" ).slider({
       orientation: "vertical",
@@ -323,10 +331,16 @@ var titration=(function(){
       value: 12,
 	  step: .01,
 	  value: 0,
-	  formater: function(val){
-		newval = Math.pow(10, -val);
-		model.infoChange("Ka", val);
-		return newval;
+	  formater: function(pKa){
+		pKa = Math.round(pKa*100)/100;
+		Ka = Math.pow(10, -pKa);
+		if (Ka <=1000){
+			Ka = JSON.stringify(Ka);
+			Ka = Ka.substring(0, 5);
+		};
+		model.infoChange("Ka", Ka);
+		
+		return pKa;
 	  },
 	  handle: "square",
     }).on('slide', function(event, ui){
@@ -337,12 +351,13 @@ var titration=(function(){
     $( "#molesAna" ).slider({
       orientation: "vertical",
       range: "min",
-      min: .1,
-      max: 20,
-      value: 1,
-	  step: .1,
+      min: .01,
+      max: 2,
+      value: .1,
+	  step: .01,
 	  handle: "square",
 	  formater: function(val){
+		val=Math.round(val*100)/100;
 		model.infoChange("molesAna", val);
 		return val;
 	  }
@@ -351,22 +366,23 @@ var titration=(function(){
 		view.graphpH();
 	});
   
-    $( "#litersAna" ).slider({
-      orientation: "vertical",
-      range: "min",
-      min: .1,
-      max: 20,
-      value: 1,
-	  step: .1,
-	  handle: "square",
-	  formater: function(val){
-		model.infoChange("litersAna", val);
-		return val;
-	  }
-    }).on('slide', function(event, ui){
-		model.buildData();
-		view.graphpH();
-	});
+    // $( "#litersAna" ).slider({
+      // orientation: "vertical",
+      // range: "min",
+      // min: .1,
+      // max: 20,
+      // value: 1,
+	  // step: .1,
+	  // handle: "square",
+	  // formater: function(val){
+		// val=Math.round(val*10)/10;
+		// model.infoChange("litersAna", val);
+		// return val;
+	  // }
+    // }).on('slide', function(event, ui){
+		// model.buildData();
+		// view.graphpH();
+	// });
 	
   
     $( "#concTitrant" ).slider({
@@ -378,7 +394,8 @@ var titration=(function(){
 	  step: .01,
 	  handle: "square",
 	  formater: function(val){
-		model.infoChange("concTitrant", val);
+		val = Math.round(val*100)/100;
+		model.infoChange("concTit", val);
 		return val;
 	  }
     }).on('slide', function(event, ui){
@@ -397,6 +414,7 @@ var titration=(function(){
 	  //also changes the currentInfo to the new dripval in liters
 	  //but displays the drip size in mL
 	  formater: function(val){
+		val=Math.round(val*10000)/10000;
 		var dripval = 1000*val;
 		model.infoChange("dripSize", val);
 		return dripval;
