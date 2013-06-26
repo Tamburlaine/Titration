@@ -2,8 +2,7 @@ var titration=(function(){
 	
 	function Model(div){
 		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3,
-		"concAna":0, "dripSize":.005, "maxTit":0, "dataArray":[]};
-		console.log("model data array" + currentInfo["dataArray"]);
+		"concAna":0, "dripSize":.005, "maxTit":500, "dataArray":[]};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -114,8 +113,6 @@ var titration=(function(){
 				dataArray.push([i*step, pH])
 			}
 			
-			console.log(String(dataArray));
-			
 			infoChange("dataArray", dataArray);
 			
 			return dataArray;
@@ -179,7 +176,6 @@ var titration=(function(){
 		//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
 		var graphSetup = function(){
 			dataArray=model.currentInfo["dataArray"];
-			console.log("dataArray is " + dataArray, "currentInfo is "+ model.currentInfo+"dA "+ model.currentInfo["dataArray"]);
 			$(".graph").remove();
 		
 			var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -272,11 +268,11 @@ var titration=(function(){
 		var undrip = $("<button class='undrip'>Undrip</button>");
 		var dump = $("<div><button class='dump'>Full Titration</button></div>");
 		// var slider = $("<div class='sliderDiv'></div>")
-		var sliderDiv = $('<div class="slider-vertical" id="pKa" style="height: 200px;"></div>');
-		var sliderDiv2 = $('<div class="slider-vertical" id="molesAna" style="height: 200px;"></div>');
-		var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"></div>');
-		var sliderDiv4 = $('<div class="slider-vertical" id="concTitrant" style="height: 200px;"></div>');
-		var sliderDiv5 = $('<div class="slider-vertical" id="dripSize" style="height: 200px;"></div>');
+		var sliderDiv = $('<div class="slider-vertical" id="pKa" style="height: 200px;"><div class="slabel">Ka</div></div>');
+		var sliderDiv2 = $('<div class="slider-vertical" id="molesAna" style="height: 200px;"><div class="slabel">moles Analyte</div></div>');
+		var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
+		var sliderDiv4 = $('<div class="slider-vertical" id="concTitrant" style="height: 200px;"><div class="slabel">conc titrant</div></div>');
+		var sliderDiv5 = $('<div class="slider-vertical" id="dripSize" style="height: 200px;"><div class="slabel">Drip Size</div></div>');
 		buttonDiv.append(drip, undrip, dump);
 		
 		div.append(buttonDiv);
@@ -319,7 +315,6 @@ var titration=(function(){
 			view.graphPH();
 		};
 		
-		  $(function() {
     $( "#pKa" ).slider({
       orientation: "vertical",
       range: "min",
@@ -330,133 +325,89 @@ var titration=(function(){
 	  value: 0,
 	  formater: function(val){
 		newval = Math.pow(10, -val);
+		model.infoChange("Ka", val);
 		return newval;
 	  },
 	  handle: "square",
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-		console.log("butts: " + ui.value);
-      }
     }).on('slide', function(event, ui){
-		console.log(newval);
-		model.infoChange("Ka", newval);
+		model.buildData();
+		view.graphpH();
+	});
+  
+    $( "#molesAna" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: .1,
+      max: 20,
+      value: 1,
+	  step: .1,
+	  handle: "square",
+	  formater: function(val){
+		model.infoChange("molesAna", val);
+		return val;
+	  }
+    }).on('slide', function(event, ui){
+		model.buildData();
+		view.graphpH();
+	});
+  
+    $( "#litersAna" ).slider({
+      orientation: "vertical",
+      range: "min",
+      min: .1,
+      max: 20,
+      value: 1,
+	  step: .1,
+	  handle: "square",
+	  formater: function(val){
+		model.infoChange("litersAna", val);
+		return val;
+	  }
+    }).on('slide', function(event, ui){
+		model.buildData();
 		view.graphpH();
 	});
 	
-	
-    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
-  });
   
-  		  $(function() {
-    $( "#molesAna" ).slider({
+    $( "#concTitrant" ).slider({
       orientation: "vertical",
       range: "min",
       min: 0,
       max: 10,
-      value: 1,
+      value: .5,
 	  step: .01,
-	  value: 0,
 	  handle: "square",
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-		console.log("butts: " + ui.value);
-      }
-    }).on('slide', function(event, ui){
-		console.log(newval);
-		model.infoChange("molesAna", newval);
-		view.graphpH();
-	});
-	
-	
-    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
-  });
-  
-  		  $(function() {
-    $( "#litersAna" ).slider({
-      orientation: "vertical",
-      range: "min",
-      min: 12,
-      max: -12,
-      value: 12,
-	  step: .01,
-	  value: 0,
 	  formater: function(val){
-		newval = Math.pow(10, -val);
-		return newval;
-	  },
-	  handle: "square",
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-		console.log("butts: " + ui.value);
-      }
+		model.infoChange("concTitrant", val);
+		return val;
+	  }
     }).on('slide', function(event, ui){
-		console.log(newval);
-		model.infoChange("Ka", newval);
+		model.buildData();
 		view.graphpH();
 	});
-	
-	
-    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
-  });
   
-  		  $(function() {
-    $( "#concTitrant" ).slider({
-      orientation: "vertical",
-      range: "min",
-      min: 12,
-      max: -12,
-      value: 12,
-	  step: .01,
-	  value: 0,
-	  formater: function(val){
-		newval = Math.pow(10, -val);
-		return newval;
-	  },
-	  handle: "square",
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-		console.log("butts: " + ui.value);
-      }
-    }).on('slide', function(event, ui){
-		console.log(newval);
-		model.infoChange("Ka", newval);
-		view.graphpH();
-	});
-	
-	
-    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
-  });
-  
-  		  $(function() {
     $( "#dripSize" ).slider({
       orientation: "vertical",
-      range: "min",
-      min: 12,
-      max: -12,
-      value: 12,
-	  step: .01,
-	  value: 0,
-	  formater: function(val){
-		newval = Math.pow(10, -val);
-		return newval;
-	  },
+      min: .005,
+      max: .0001,
+      value: .0001,
+	  step: .0001,
 	  handle: "square",
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-		console.log("butts: " + ui.value);
-      }
+	  //this alters the dripsize in liters
+	  //also changes the currentInfo to the new dripval in liters
+	  //but displays the drip size in mL
+	  formater: function(val){
+		var dripval = 1000*val;
+		model.infoChange("dripSize", val);
+		return dripval;
+	  }
     }).on('slide', function(event, ui){
-		console.log(newval);
-		model.infoChange("Ka", newval);
+		model.buildData();
 		view.graphpH();
 	});
-	
-	
-    //$( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
-  });
   
 
-	};
+};
 	
 	return {setup: setup};
 }());
