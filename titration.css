@@ -14,7 +14,7 @@ body {
 	width: 100px;
 }
 
-.slideDiv{height: 400px; width: 240px; position:relative; top:-150px; left:350px;}
+.slideDiv{height: 400px; width: 500px; position:relative; top:-150px; left:200px;}
 
 .axis path,
 .axis line {
@@ -31,20 +31,21 @@ body {
 
 .buttonDiv{
 	position: relative;
-	left: 200px;
-	top: -560px;
-	width: 150px;
+	left: 180px;
+	top: -380px;
+	width: 500px;
 }
 
 .graph{
 	position: relative;
-	top: -400px;
+	top: -580px;
 	left: -20px;
 }
 
 .button {
-	width: 120px;
+	width: 100px;
 	margin-top: 20px;
+	margin-right: 20px;
   border-radius: 15px;
   background-color: hsl(214, 37%, 52%) !important;
   background-repeat: repeat-x;
@@ -60,4 +61,16 @@ body {
   color: #333 !important;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.56);
   -webkit-font-smoothing: antialiased;
+}
+
+.input{
+	width: 50px;
+	margin-bottom: 20px;
+	margin-right: 20px;
+}
+
+.inputDiv{
+	position: relative;
+	float: right;
+	top: -582px;
 }
