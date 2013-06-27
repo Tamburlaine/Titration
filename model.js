@@ -43,7 +43,7 @@ function Model(div){
 		}
 
 
-		/* phCalc takes the current volume in beaker, the current number of moles of analyte, the kA of the analyte, and the amount of titrant added this step. It then calculates pH after reaction. Note that it currently automatically makes the %5 assumption, so it is slightly inaccurate. This will be fixed later. It is iteratively called in buildData*/
+		/* pHCalc takes molesTitrantAdded, molesAnalyte, total volume in the beaker, a appropriate Ka/Kb, the equivalence point(calculated by calculateEqPt), and an optional artifact baseAnalyte. It uses a piecewise function to calculate pH at a given set of info.*/
 		/*baseAnalyte is an optional argument. If false, the calculator assumes a weak acid titrated with strong base, and interprets K as a Ka. If true, it assumes a weak base titrated with a strong acid, and interprets K as Kb . It defaults to false.*/
 		var pHCalc = function(molesTitrantAdded, molesAnalyte, volume, K, eqPoint, baseAnalyte){
 			
@@ -115,7 +115,7 @@ function Model(div){
 			return dataArray;
 		}
 
-
+        /*These pH functions are helper functions for pH calc. Based on the current moles of titrant added and the moles of analyte, a different function is called.*/
 		var initialPH = function(conc, k){
 			var pH = .5*(findPH(conc*k))
 			//Uses concentrated weak acid assumption to find pH at start
@@ -150,7 +150,7 @@ function Model(div){
 			var pH = 14-pOH;
 			return pH;
 		}
-
+        /*calculateEqPoint is used to find the equivalence point. This value is used in dilutionPH calculations, and will be used to mark off the equivalence point on the graph*/
 		var calculateEqPoint = function( molesAnalyte, volumeAnalyte, concTitrant, K) {
 			var volumeTitrantNeeded = molesAnalyte/concTitrant;
 			var newVolume = volumeAnalyte + volumeTitrantNeeded;
