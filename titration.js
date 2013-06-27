@@ -214,7 +214,7 @@ var titration=(function(){
 				  .attr("class", "x axis")
 				  .attr("transform", "translate(0," + height + ")")
 				  .call(xAxis)
-				  .append("text").attr("x", "90%").attr("dy", -4).text("milliliters titrant");
+				  .append("text").attr("x", "80%").attr("dy", -4).text("milliliters titrant");
 			
 			  svg.append("g")
 				  .attr("class", "y axis")
@@ -295,17 +295,19 @@ var titration=(function(){
 		view.graphSetup(dataArray);
 		
 		$(".pKaInp").change(function(){
-			console.log($(".pKaInp").val());
-			 $( "#pKa" ).slider({
-			value: $(".pKaInp").val()
-			})
+			$( "#pKa" ).slider("setValue", $(".pKaInp").val());
 			});
 			
 		$(".molesAnaInp").change(function(){
-			console.log($(".molesAnaInp").val());
-			 $( "#molesAna" ).slider({
-			value: $(".molesAnaInp").val()
-			})
+			 $( "#molesAna" ).slider("setValue", $(".molesAnaInp").val());
+			});
+		
+		$(".concTitInp").change(function(){
+			 $( "#concTitrant" ).slider("setValue", $(".concTitInp").val());
+			});
+			
+		$(".dripInp").change(function(){
+			 $( "#dripSize" ).slider("setValue", $(".dripInp").val()/1000);
 			});
 		
 		// $(".Div").slider()
@@ -315,7 +317,6 @@ var titration=(function(){
 		//we need to figure out when they stop clicking the titration button (it might get a little nasty if
 		//we keep increasing maxTit when the data array only extends so far)
 		$(".drip").click(function(){
-			console.log("butts");
 			dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
 			model.infoAdd("maxTit", dripSize);
@@ -346,19 +347,16 @@ var titration=(function(){
 		});
 		
     $( "#pKa" ).slider({
-	  value: 3,
       range: "min",
-      min: 8,
-      max: -2,
+      min: -2,
+      max: 8,
 	  step: .01,
+	  value: 3,
 	  formater: function(pKa){
 		pKa = Math.round(pKa*1000)/1000;
 		Ka = Math.pow(10, -pKa);
-//		if (Ka <=1000){
-//			Ka = JSON.stringify(Ka);
-//			Ka = Ka.substring(0, 5);
-//		};
 		model.infoChange("Ka", Ka);
+		$( ".pKaInp" ).val(pKa);
 		
 		return pKa;
 	  },
@@ -378,31 +376,13 @@ var titration=(function(){
 	  formater: function(val){
 		val=Math.round(val*100)/100;
 		model.infoChange("molesAna", val);
+		$(".molesAnaInp").val(val);
 		return val;
 	  }
     }).on('slide', function(event, ui){
 		model.buildData();
 		view.graphpH();
-	});
-  
-    // $( "#litersAna" ).slider({
-      // orientation: "vertical",
-      // range: "min",
-      // min: .1,
-      // max: 20,
-      // value: 1,
-	  // step: .1,
-	  // handle: "round",
-	  // formater: function(val){
-		// val=Math.round(val*10)/10;
-		// model.infoChange("litersAna", val);
-		// return val;
-	  // }
-    // }).on('slide', function(event, ui){
-		// model.buildData();
-		// view.graphpH();
-	// });
-	
+	});	
   
     $( "#concTitrant" ).slider({
       range: "min",
@@ -414,6 +394,7 @@ var titration=(function(){
 	  formater: function(val){
 		val = Math.round(val*100)/100;
 		model.infoChange("concTit", val);
+		$(".concTitInp").val(val);
 		return val;
 	  }
     }).on('slide', function(event, ui){
@@ -422,8 +403,8 @@ var titration=(function(){
 	});
   
     $( "#dripSize" ).slider({
-      min: .005,
-      max: .0001,
+      min: .0001,
+      max: .005,
       value: .0001,
 	  step: .0001,
 	  handle: "round",
@@ -434,6 +415,7 @@ var titration=(function(){
 		val=Math.round(val*10000)/10000;
 		var dripval = 1000*val;
 		model.infoChange("dripSize", val);
+		$(".dripInp").val(dripval)
 		return dripval;
 	  }
     }).on('slide', function(event, ui){
