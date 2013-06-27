@@ -99,10 +99,10 @@ var titration=(function(){
 		var beakerDiv=$("<div class='beakerDiv'></div>")
 		var buttonDiv = $("<div class='buttonDiv'></div>");
 		var slideDiv=$("<div class ='slideDiv'></div>");
-		var drip = $("<button class='button drip'>Drip</button>");
-		var undrip = $("<button class='button undrip'>Undrip</button>");
-		var dump = $("<button class='button dump'>Full Titration</button>");
-		var clear=$("<button class='button clear'>Clear</button>")
+		var drip = $("<button class='btn btn-primary drip button'><font color='white'>Drip</font></button>");
+		var undrip = $("<button class='btn btn-primary undrip button'><font color='white'>Undrip</font></button>");
+		var dump = $("<button class='btn btn-primary dump button'><font color='white'>Full Titration</font></button>");
+		var clear=$("<button class='btn btn-primary clear button'><font color='white'>Clear</font></button>")
 		// var slider = $("<div class='sliderDiv'></div>")
 		var sliderDiv = $('<div class="slider" id="pKa" style="width: 350px;"><div class="slabel">pKa</div></div>');
 		var sliderDiv2 = $('<div class="slider" id="molesAna" style="width: 350px;"><div class="slabel">Moles Analyte</div></div>');
