@@ -26,10 +26,19 @@ var beaker = function(){
         .append("<img src=rsz_beakercontentsblue.png class='blue'></div>")
         
     }
+    
+    var dropperOnClick = function{
+        dripSize = model.currentInfo["dripSize"];
+        model.infoAdd("millilitersTit", dripSize);
+        model.infoAdd("maxTit", dripSize);
+        view.graphpH();
+        var pH = Model().currentInfo['pH']
+        pHtoColor(pH);
+    }
    
     var pH = Model().currentInfo['pH']
     var setupDropper = function(){
-        $('.dropper').append("<img src = dropper.png onclick = beaker().pHtoColor("+pH+") class = 'dropperPic'>")
+        $('.dropper').append("<img src = dropper.png onclick = dropperOnClick() class = 'dropperPic'>")
     }
     
     var exports = {'pHtoColor':pHtoColor, 'setupBeaker':setupBeaker, 'setupDropper':setupDropper}
