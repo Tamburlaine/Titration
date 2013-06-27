@@ -1,4 +1,4 @@
-var beaker = function(){
+var Beaker = function(){
     
     var pHtoColor = function(pH){
         var red = 1
@@ -21,13 +21,13 @@ var beaker = function(){
     }
     
     var setupBeaker = function (div) {
-        $(div).append("<div class= 'dropper'></div><div><img src=rsz_beakertop.png class='beakerTop'>")
+        $(div).append("<div class= 'dropper'></div><img src=rsz_beakertop.png class='beakerTop'>")
         .append("<img src=rsz_beakercontents.png class='red'>")
-        .append("<img src=rsz_beakercontentsblue.png class='blue'></div>")
+        .append("<img src=rsz_beakercontentsblue.png class='blue'>")
         
     }
     
-    var dropperOnClick = function{
+    var dropperOnClick = function(){
         dripSize = model.currentInfo["dripSize"];
         model.infoAdd("millilitersTit", dripSize);
         model.infoAdd("maxTit", dripSize);
@@ -44,11 +44,4 @@ var beaker = function(){
     var exports = {'pHtoColor':pHtoColor, 'setupBeaker':setupBeaker, 'setupDropper':setupDropper}
     return exports
     
-}
-
-$(document).ready(function(){
-    $('.beaker').each(function(){
-        beaker().setupBeaker($(this));});
-    $('.dropper').each(function(){
-        beaker().setupDropper($(this));});
-});
+};

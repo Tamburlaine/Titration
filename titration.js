@@ -291,6 +291,10 @@ var titration=(function(){
 		var dataArray = model.currentInfo["dataArray"];
         var controller=Controller(model);
         var view=View(div, model,controller);
+		
+		var beaker = Beaker();
+		beaker.setupBeaker(beakerDiv);
+		beaker.setupDropper()
 
 		view.graphSetup(dataArray);
 		
