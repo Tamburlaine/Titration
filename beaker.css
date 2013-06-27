@@ -9,7 +9,7 @@
     position:absolute;
 
     width:100%;
-    top:82px;
+    top:190px;
     left:0px;
     
 }
@@ -17,7 +17,7 @@
 .blue{
     position:absolute;
     width:100%;
-    top:82px;
+    top:190px;
     left:0px;
 }
 
@@ -28,6 +28,18 @@
 */
     position:absolute;
     left:24px;
+    top:108px;
     
     
+}
+.dropper{
+    height:50px;
+    width:50px;
+}
+
+.dropperPic{
+    position:relative;
+    height:100px;
+    width:100px;
+    left:60px;
 }
