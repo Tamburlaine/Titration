@@ -335,9 +335,10 @@ var titration=(function(){
 		});
 		
 		$(".dump").click(function(){
-			DA = model.currentInfo["dataArray"];
-			DALen = model.currentInfo["dataArray"].length;
-			newMax = DA[DALen-1][0];
+			model.buildData();
+			var DA = model.currentInfo["dataArray"];
+			var DALen = model.currentInfo["dataArray"].length;
+			var newMax = DA[DALen-1][0];
 			model.infoChange("maxTit", newMax);
 			model.infoChange("millilitersTit", newMax);
 			view.graphpH();
