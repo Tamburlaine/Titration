@@ -71,6 +71,7 @@
   display: none;
 }
 .slider .tooltip-inner {
+	opacity: 0;
   white-space: nowrap;
   position: relative;
   left: -30;
