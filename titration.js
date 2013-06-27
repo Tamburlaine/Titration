@@ -270,7 +270,7 @@ var titration=(function(){
 		var dump = $("<button class='button dump'>Full Titration</button>");
 		var clear=$("<button class='button clear'>Clear</button>")
 		// var slider = $("<div class='sliderDiv'></div>")
-		var sliderDiv = $('<div><div class="slider" id="pKa" style="width: 350px;"></div><div class="slabel">pKa</div></div>');
+		var sliderDiv = $('<div class="slider" id="pKa" style="width: 350px;"><div class="slabel">pKa</div></div>');
 		var sliderDiv2 = $('<div class="slider" id="molesAna" style="width: 350px;"><div class="slabel">Moles Analyte</div></div>');
 		//var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
 		var sliderDiv4 = $('<div class="slider" id="concTitrant" style="width: 350px;"><div class="slabel">Titrant Concentration (Mol/L)</div></div>');
@@ -295,9 +295,18 @@ var titration=(function(){
 		view.graphSetup(dataArray);
 		
 		$(".pKaInp").change(function(){
-			console.log($("#pKa").slider("value"));
-			$("#pKa").slider('setValue', pKaInp.val());
-		});
+			console.log($(".pKaInp").val());
+			 $( "#pKa" ).slider({
+			value: $(".pKaInp").val()
+			})
+			});
+			
+		$(".molesAnaInp").change(function(){
+			console.log($(".molesAnaInp").val());
+			 $( "#molesAna" ).slider({
+			value: $(".molesAnaInp").val()
+			})
+			});
 		
 		// $(".Div").slider()
 
@@ -337,10 +346,10 @@ var titration=(function(){
 		});
 		
     $( "#pKa" ).slider({
+	  value: 3,
       range: "min",
       min: 8,
       max: -2,
-      value: 3,
 	  step: .01,
 	  formater: function(pKa){
 		pKa = Math.round(pKa*1000)/1000;
@@ -363,7 +372,7 @@ var titration=(function(){
       range: "min",
       min: .01,
       max: 2,
-      value: .1,
+      value: 1,
 	  step: .01,
 	  handle: "round",
 	  formater: function(val){
