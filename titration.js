@@ -48,7 +48,8 @@ var titration=(function(){
 				  .attr("class", "x axis")
 				  .attr("transform", "translate(0," + height + ")")
 				  .call(xAxis)
-				  .append("text").attr("x", "80%").attr("dy", -4).text("milliliters titrant");
+				 // .scale(xScale*1000)
+				  .append("text").attr("x", "77%").attr("dy", -4).text("Liters Titrant");
 			
 			  svg.append("g")
 				  .attr("class", "y axis")
@@ -68,6 +69,30 @@ var titration=(function(){
 				  .attr("class", "line")
 				  .attr("d", line);
 				  };
+				  
+			//var eqPoint = model.currentInfo["eqPoint"];
+			
+			var eqPoint = 3
+			
+			var coordFromPH = function(pH){
+				var dataArray = model.currentInfo["dataArray"];
+				var dataForPoint = [];
+				for (var i=0; i<dataArray.length; i++){
+					if (dataArray[i][1]<=pH){}
+					else if (dataArray == []){break;}
+					else if (!dataArray[i-1]){break;}
+					else{
+						console.log(dataArray[i-1]);
+						dataForPoint = [dataArray[i-1][0], dataArray[i-1][1]];
+						break;
+					}
+				}
+				return dataForPoint;
+			};
+			
+			console.log(coordFromPH(3));
+			
+			//svg.append("g").attr("class", "eqPoint").call()
 			
 			return{extendGraph:extendGraph};
 		};
