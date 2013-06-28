@@ -14,7 +14,7 @@ var Beaker = function(){
             
         }
         else if ( (startPH<pH) && (pH<endPH)){
-            blue =(pH-startPH) /(endPH-startPH
+            blue =(pH-startPH) /(endPH-startPH)
             red = 1-blue
         }
         else if (pH>=endPH){
@@ -33,19 +33,14 @@ var Beaker = function(){
         
     }
     /* Not used. Will be removed when i can safely access titration.js*/
-    var dropperOnClick = function(){
-        
-        var pH = Model().currentInfo['pH']
-        pHtoColor(pH);
-    }
-   
+    
     var pH = Model().currentInfo['pH']
     /*Sets up the dropper*/
     var setupDropper = function(){
         $('.dropper').append("<img src = dropper.png class = 'dropperPic'>")
     }
     
-    var exports = {'pHtoColor':pHtoColor, 'setupBeaker':setupBeaker, 'setupDropper':setupDropper, 'dropperOnClick':dropperOnClick}
+    var exports = {'pHtoColor':pHtoColor, 'setupBeaker':setupBeaker, 'setupDropper':setupDropper}
     return exports
     
 };

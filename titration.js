@@ -86,6 +86,7 @@ var titration=(function(){
 				break;
 				}
 			};
+            Beaker().pHtoColor(dataToGraph[dataToGraph.length-1][1])
 			graphSetup(dataArray).extendGraph(dataToGraph);
 				
 		};
