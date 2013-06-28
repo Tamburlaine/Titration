@@ -269,6 +269,8 @@ var titration=(function(){
 		model.buildData();
 		view.graphpH();
 	});
+	
+	$(".round").addClass("btn btn-primary btn-mini");
   
 
 };
