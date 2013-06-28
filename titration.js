@@ -111,7 +111,9 @@ var titration=(function(){
 				break;
 				}
 			};
-            Beaker().pHtoColor(dataToGraph[dataToGraph.length-1][1])
+            if (dataToGraph.length>0){
+                Beaker().pHtoColor(dataToGraph[dataToGraph.length-1][1])
+            }
 			graphSetup(dataArray).extendGraph(dataToGraph);
 				
 		};
@@ -259,7 +261,7 @@ var titration=(function(){
   
     $( "#concTitrant" ).slider({
       range: "min",
-      min: 0,
+      min: .01,
       max: 10,
       value: .5,
 	  step: .01,

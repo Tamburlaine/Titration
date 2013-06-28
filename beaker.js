@@ -30,7 +30,7 @@ var Beaker = function(){
         $(div).append("<div class= 'dropper'></div><img src=rsz_beakertop.png class='beakerTop'>")
         .append("<img src=rsz_beakercontents.png class='red'>")
         .append("<img src=rsz_beakercontentsblue.png class='blue'>")
-        
+        .append("<div class = 'instructions'><h5> Try setting some values, hit clear, and click the dropper!</h5></div>")
     }
     /* Not used. Will be removed when i can safely access titration.js*/
     
