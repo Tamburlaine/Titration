@@ -113,7 +113,6 @@ function Model(div){
 			}
 			
 			infoChange("dataArray", dataArray);
-			console.log(dataArray)
 			return dataArray;
 		}
 

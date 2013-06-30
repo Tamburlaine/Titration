@@ -9,7 +9,7 @@ var titration=(function(){
 	function View(div, model, controller){
 		//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
 		var graphSetup = function(){
-			dataArray=model.currentInfo["dataArray"];
+			var dataArray=model.currentInfo["dataArray"];
 			$(".graph").remove();
 		
 			var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -75,24 +75,50 @@ var titration=(function(){
 			var eqPoint = 3
 			
 			var coordFromPH = function(pH){
-				var dataArray = model.currentInfo["dataArray"];
+				dataArray = model.currentInfo["dataArray"];
 				var dataForPoint = [];
 				for (var i=0; i<dataArray.length; i++){
 					if (dataArray[i][1]<=pH){}
 					else if (dataArray == []){break;}
 					else if (!dataArray[i-1]){break;}
 					else{
-						console.log(dataArray[i-1]);
-						dataForPoint = [dataArray[i-1][0], dataArray[i-1][1]];
+						dataForPoint = dataArray[i-1];
 						break;
 					}
 				}
 				return dataForPoint;
 			};
 			
-			console.log(coordFromPH(3));
+			var eqPointData=coordFromPH(eqPoint);
+			console.log("eqPointData " + eqPointData);
 			
-			//svg.append("g").attr("class", "eqPoint").call()
+			var maxXY = model.currentInfo["dataArray"][model.currentInfo["dataArray"].length-1];
+			var minXY = model.currentInfo["dataArray"][0];
+			console.log("minXY " + minXY);
+			console.log("maxXY " + maxXY);
+			
+			svg.selectAll("circle").data(eqPointData).enter().append("circle")
+			.attr("cx", function(){
+				if (maxXY){
+					var x =	582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
+					console.log("x" + x);
+					return x;
+					}
+					})
+			.attr("cy", function(){
+				if(maxXY){
+					var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
+					console.log("y " + y);
+					return y;
+					}
+					})
+			.attr("r", 5);
+			
+			
+			//console.log("dataArray " + dataArray);
+			//console.log("coordinates for PH 3 " + coordFromPH(3));
+			
+			// svg.append("g").attr("class", "eqPoint").call()
 			
 			return{extendGraph:extendGraph};
 		};
@@ -100,9 +126,9 @@ var titration=(function(){
 		//updates the graph display after more titrant has been added
 		//should be compatible with both drip and undrip
 		var graphpH=function(){
-			maxTit=model.currentInfo["maxTit"];
+			var maxTit=model.currentInfo["maxTit"];
 			dataArray=model.currentInfo["dataArray"];
-			dataToGraph = [];
+			var dataToGraph = [];
 			for(var i=0; i<dataArray.length; i++){
 				if(dataArray[i][0]<=maxTit){
 					dataToGraph.push(dataArray[i])
