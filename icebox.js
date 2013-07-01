@@ -1,18 +1,22 @@
 var icebox = function() {
+    
+/*These variables are used to store the values needed by iceboxSetup and iceboxCalcText. They are updated by getEqInfo.*/
 var acidInitial = 0
 var ohInitial = 0
 var baseInitial = 0
 var Ka= 0
 
+/*getEqInfo is called by iceboxSetup to update the values that will be used in the icebox. It gets values from Model().currentInfo. Currently, it only will get values used to calculate the equivalence point. Possible future functionality would be to add other relevant points.*/
 var getEqInfo = function(){
     acidInitial = 0
     baseInitial = Model().currentInfo['molesAna']
     Ka = Model().currentInfo['Ka']
     ohInitial = 0
 }
-
-var iceboxSetup = function(div, infoFunction){
-    infoFunction()
+/*iceboxSetup is called in order to make the table that will display the icebox. It calls an getEqInfo, which will set the stored values needed to do the icebox and associated calculations. It aslo empties the given div, builds and fill the icebox, and makes the div that will hold the calculation text.*/
+var iceboxSetup = function(div){
+    getEqInfo()
+    $(div).empty()
     $(div).append('<div class = iceboxTable><table class="table table-striped"></table></div>')
     $('.table').append("<tr class = 'row1'></tr><tr class = 'row2 info'></tr><tr class = 'row3'></tr><tr class = 'row4 info'></tr>"
                       )
@@ -27,6 +31,7 @@ var iceboxSetup = function(div, infoFunction){
       $('.icebox').append('<div class = "calcText"></div>')
 }
 
+/*iceboxCalcText build the calculation text that is displayed below the icebox. It replicates the math done in model.js to some extent, with extra rounding and explanations of what is happening.*/
 var iceboxCalcText = function(){
     
     $('.calcText').empty()
