@@ -6,7 +6,7 @@ var titration=(function(){
 	
 	};
 	
-	function View(div, model, controller){
+	function View(div, model){
 		//sets up the graph to the size of the data array. Includes function extendGraph(data) for updating graph
 		var graphSetup = function(){
 			var dataArray=model.currentInfo["dataArray"];
@@ -104,7 +104,6 @@ var titration=(function(){
 				.attr("cy", function(){
 					if(maxXY){
 						var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
-						console.log("y " + y);
 						$(".circleLabel").css("top", y-322);
 						return y-2;
 						}
@@ -117,6 +116,7 @@ var titration=(function(){
 			
 		//updates the graph display after more titrant has been added
 		//should be compatible with both drip and undrip
+		//this should be called every time there is a change to dataArray
 		var graphpH=function(){
 			var maxTit=model.currentInfo["maxTit"];
 			dataArray=model.currentInfo["dataArray"];
@@ -141,7 +141,11 @@ var titration=(function(){
 		return exports;
     };
 	
+	
+	//setup is called as soon as the document is ready
+	//adds all the HTML elements
 	function setup(div){
+		//add all the divs required -- beaker, buttons, sliders
 		var beakerDiv=$("<div class='beakerDiv'></div>")
 		var buttonDiv = $("<div class='buttonDiv'></div>");
 		var slideDiv=$("<div class ='slideDiv'></div>");
@@ -149,14 +153,11 @@ var titration=(function(){
 		var undrip = $("<button class='btn btn-primary undrip button'><font color='white'>Undrip</font></button>");
 		var dump = $("<button class='btn btn-primary dump button'><font color='white'>Full Titration</font></button>");
 		var clear=$("<button class='btn btn-primary clear button'><font color='white'>Clear</font></button>")
-		// var slider = $("<div class='sliderDiv'></div>")
 		var sliderDiv = $('<div class="slider" id="pKa" style="width: 350px;"><div class="slabel">pKa</div></div>');
 		var sliderDiv2 = $('<div class="slider" id="molesAna" style="width: 350px;"><div class="slabel">Moles Analyte</div></div>');
-		//var sliderDiv3 = $('<div class="slider-vertical" id="litersAna" style="height: 200px;"><div class="slabel">liters analyte</div></div>');
 		var sliderDiv4 = $('<div class="slider" id="concTitrant" style="width: 350px;"><div class="slabel">Titrant Concentration (Mol/L)</div></div>');
 		var sliderDiv5 = $('<div class="slider" id="dripSize" style="width: 350px;"><div class="slabel">Drip Size (mL)</div></div>');
 		buttonDiv.append(drip, undrip, dump, clear);
-		
 		var inputDiv = $("<div class ='inputDiv input'></input>");
 		var pKaInp = $("<input type='text' class='pKaInp input'></input>");
 		var molesAnaInp = $("<input type='text' class='molesAnaInp input'></input>");
@@ -167,17 +168,24 @@ var titration=(function(){
 		slideDiv.append(sliderDiv, sliderDiv2, sliderDiv4, sliderDiv5);
 		div.append(beakerDiv, slideDiv, buttonDiv, inputDiv);
 		
+		//Model() is located in model.js, which is called in the html
 		var model=Model();
+		//currentInfo is an array in model containing all of the current relevant information
+		//eg currentInfo["molesTit"] would give us the moles of Titrant
+		//dataArray is an array of arrays of format [liters titrant added, pH] for graphing
 		var dataArray = model.currentInfo["dataArray"];
-        var controller=Controller(model);
-        var view=View(div, model,controller);
+        var view=View(div, model);
 		
+		//sets up the beaker div -- Beaker() is located in beaker.js
 		var beaker = Beaker();
 		beaker.setupBeaker(beakerDiv);
 		beaker.setupDropper()
 
+		//graphs all the information in the data array so that the axes are the correct size
+		// but doesn't display the path
 		view.graphSetup(dataArray);
 		
+		//giving functionalities to all the sliders
 		$(".pKaInp").change(function(){
 			$( "#pKa" ).slider("setValue", $(".pKaInp").val());
 			});
@@ -194,10 +202,7 @@ var titration=(function(){
 			 $( "#dripSize" ).slider("setValue", $(".dripInp").val()/1000);
 			});
 		
-		//now I'm binding functions to the buttons
-		//we need to figure out when they stop clicking the titration button (it might get a little nasty if
-		//we keep increasing maxTit when the data array only extends so far)
-        
+		//giving functionalities to the buttons
         $(".dropperPic").click(function(){
             dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
@@ -205,6 +210,7 @@ var titration=(function(){
 			view.graphpH();
 		});
         
+		//adds one drop of titrant (amount controlled by dropSize) to the analyte
 		$(".drip").click(function(){
 			dripSize = model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", dripSize);
@@ -212,6 +218,7 @@ var titration=(function(){
 			view.graphpH();
 		});
 		
+		//removes one drop of titrant from the analyte
 		$(".undrip").click(function(){
 			dripSize=model.currentInfo["dripSize"];
 			model.infoAdd("millilitersTit", -dripSize);
@@ -219,6 +226,7 @@ var titration=(function(){
 			view.graphpH();
 		});
 		
+		//dump puts 200 mL of titrant in the analyte, completing the titration
 		$(".dump").click(function(){
 			model.buildData();
 			var DA = model.currentInfo["dataArray"];
@@ -229,13 +237,18 @@ var titration=(function(){
 			view.graphpH();
 		});
 		
+		//removes all titrant from the analyte
 		$(".clear").click(function(){
-			console.log("clear");
 			model.infoChange("maxTit", 0);
-			console.log(model.currentInfo["maxTit"]);
 			view.graphpH();
 		});
-		
+	
+	//adds functionality to the sliders
+	//all sliders call model.buildData upon being changed, which builds a new dataArray
+	//all sliders also graph the new data Array, allowing the graph to change dynamically with the user input
+	
+	//pKa slider alters the pKa, but it alters dataArray's Ka (which is 10^(-pKa)
+	//this allows us to put what is essentially a logarithmic function on a linear scale
     $( "#pKa" ).slider({
       range: "min",
       min: -2,
@@ -256,6 +269,8 @@ var titration=(function(){
 		view.graphpH();
 	});
   
+	//moles Analyte
+	//we assume that there is 1 liter of analyte
     $( "#molesAna" ).slider({
       range: "min",
       min: .01,
@@ -274,6 +289,7 @@ var titration=(function(){
 		view.graphpH();
 	});	
   
+	//concentration of the Titrant in moles/Liter
     $( "#concTitrant" ).slider({
       range: "min",
       min: .01,
@@ -292,6 +308,8 @@ var titration=(function(){
 		view.graphpH();
 	});
   
+	//size of drips added
+	//not only does this alter how much is added per drip, but it also changes the resolution of the graph
     $( "#dripSize" ).slider({
       min: .0001,
       max: .005,
@@ -313,6 +331,7 @@ var titration=(function(){
 		view.graphpH();
 	});
 	
+	//bootstrap button the slider handles
 	$(".round").addClass("btn btn-primary btn-mini");
   
 
@@ -321,6 +340,7 @@ var titration=(function(){
 	return {setup: setup};
 }());
 
+//call setup when the document is ready
 $(document).ready(function(){
     $('.titration').each(function(){
         titration.setup($(this));});

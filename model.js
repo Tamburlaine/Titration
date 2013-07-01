@@ -1,5 +1,5 @@
 function Model(div){
-		var currentInfo = {"buffer":[0,0], "molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1, 'eqPoint':0};
+		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1, 'eqPoint':0};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
@@ -135,7 +135,7 @@ function Model(div){
 			 var oppositeK = Math.pow(10, -14)/K
 			//converts Ka to Kb, and vice versa
 			 var pOH = .5*findPH(oppositeK/concProduct)
-			 //Uses concentrated weak base asummption
+			 //Uses concentrated weak base assumption
 			 var pH= 14- pOH
 			 return pH
 		}
