@@ -129,7 +129,7 @@ var titration=(function(){
 			
 		}
 
-		/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object*/
+		/*buildData creates the array of data used to graph the curve. It takes starting moles and volumes of analyte, a concentraion and total amount to added of titrant, a Ka of analyte, and step, which is the volume of 1 drop of titrant. It then calls pHCalc iteratively while tracking the amounts of each object. Also builds the icebox.*/
 		var buildData = function(baseAnalyte) {
 			
 			var molesAnalyte = currentInfo['molesAna'];
@@ -162,6 +162,9 @@ var titration=(function(){
 			}
 			
 			infoChange("dataArray", dataArray);
+            $('.icebox').remove();
+            $('.titration').append('<div class = "icebox"></div>')
+            icebox().iceboxSetup($('.icebox'))
 			return dataArray;
 		}
 

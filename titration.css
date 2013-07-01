@@ -270,3 +270,19 @@ body {
     left:20px;
     
 }
+
+.icebox{
+    position:relative;
+    left:650px;
+    top:-575px;
+}
+.iceboxTable{
+    width: 400px;
+    height: 148px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+.calcText{
+    margin:20px;
+    
+}

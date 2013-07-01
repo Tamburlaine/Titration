@@ -29,6 +29,8 @@ var iceboxSetup = function(div){
       $('.row4').append("<td>End</td><td class='baseEnd'>" + baseInitial +" - x</td><td>Irrelevant</td><td class='ohEnd'>"+ohInitial+" + x</td><td class='acidEnd'>"+acidInitial+" + x</td>"
                        )
       $('.icebox').append('<div class = "calcText"></div>')
+      
+      iceboxCalcText()
 }
 
 /*iceboxCalcText build the calculation text that is displayed below the icebox. It replicates the math done in model.js to some extent, with extra rounding and explanations of what is happening.*/
