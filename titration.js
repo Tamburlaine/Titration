@@ -511,7 +511,7 @@ var titration=(function(){
     $( "#concTitrant" ).slider({
       range: "min",
       min: .01,
-      max: 9.99,
+      max: 10,
       value: .5,
 	  step: .01,
 	  handle: "round",
