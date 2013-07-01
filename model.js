@@ -94,7 +94,7 @@ function Model(div){
 			var volume = volumeAnalyte
 			var molesTitrant = (volumeTitrant*concTitrant);
 			
-			var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)[1]
+			var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)
             
             infoChange('eqPoint', eqPoint)
 			
