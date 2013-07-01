@@ -94,7 +94,7 @@ function Model(div){
 			var volume = volumeAnalyte
 			var molesTitrant = (volumeTitrant*concTitrant);
 			
-			var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)
+			var eqPoint =  calculateEqPoint(molesAnalyte, volumeAnalyte, concTitrant, K)[1]
             
             infoChange('eqPoint', eqPoint)
 			
@@ -157,7 +157,7 @@ function Model(div){
 			var newVolume = volumeAnalyte + volumeTitrantNeeded;
 			var concProduct = molesAnalyte/newVolume;
 			var pH = equivalencePH(concProduct, K)
-			return pH;
+			return [volumeTitrantNeeded, pH];
 		}
 		exports={"currentInfo":currentInfo, "infoAdd":infoAdd, "infoChange":infoChange, "calculateConcTit":calculateConcTit, "convertToMoles":convertToMoles,
 		"findPH":findPH, "pHCalc":pHCalc, "buildData":buildData, "initialPH":initialPH, "bufferZonePH":bufferZonePH, "equivalencePH":equivalencePH,
