@@ -70,9 +70,7 @@ var titration=(function(){
 				  .attr("d", line);
 				  };
 				  
-			//var eqPoint = model.currentInfo["eqPoint"];
-			
-			var eqPoint = 3
+			var eqPoint = model.currentInfo["eqPoint"];
 			
 			var coordFromPH = function(pH){
 				dataArray = model.currentInfo["dataArray"];
@@ -89,36 +87,48 @@ var titration=(function(){
 				return dataForPoint;
 			};
 			
-			var eqPointData=coordFromPH(eqPoint);
-			console.log("eqPointData " + eqPointData);
+			//this section turns the buffer info into graphable data
+			var buffer = model.currentInfo["buffer"];
 			
-			var maxXY = model.currentInfo["dataArray"][model.currentInfo["dataArray"].length-1];
-			var minXY = model.currentInfo["dataArray"][0];
-			console.log("minXY " + minXY);
-			console.log("maxXY " + maxXY);
+			//this will be a function that turns the buffer info into graphable data
+			var bufferData = buffer;
 			
-			svg.selectAll("circle").data(eqPointData).enter().append("circle")
-			.attr("cx", function(){
-				if (maxXY){
+			var graphBuffer = function(){
+				svg.selectAll("rect").data(bufferData).enter().append("rect")
+				.attr("x", function(){
 					var x =	582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
 					console.log("x" + x);
 					return x;
-					}
-					})
-			.attr("cy", function(){
-				if(maxXY){
-					var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
-					console.log("y " + y);
-					return y;
-					}
-					})
-			.attr("r", 5);
+				})
+			}();
 			
+			//this turns eqPoint into graphable data
+			var eqPointData=coordFromPH(eqPoint);
 			
-			//console.log("dataArray " + dataArray);
-			//console.log("coordinates for PH 3 " + coordFromPH(3));
+			var maxXY = model.currentInfo["dataArray"][model.currentInfo["dataArray"].length-1];
+			var minXY = model.currentInfo["dataArray"][0];
 			
-			// svg.append("g").attr("class", "eqPoint").call()
+			//this section puts a circle on the graph at the equivalence point
+			//it currently is automatically called but could easily be made into a callable function
+			// we currently have a slight problem with placement due to discrete drips
+			var graphEqPoint = function(){
+				svg.selectAll("circle").data(eqPointData).enter().append("circle")
+				.attr("cx", function(){
+					if (maxXY){
+						var x =	582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
+						console.log("x" + x);
+						return x;
+						}
+						})
+				.attr("cy", function(){
+					if(maxXY){
+						var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
+						console.log("y " + y);
+						return y-2;
+						}
+						})
+				.attr("r", 5);
+				}();
 			
 			return{extendGraph:extendGraph};
 		};

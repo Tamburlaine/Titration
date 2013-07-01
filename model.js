@@ -1,5 +1,5 @@
 function Model(div){
-		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1, 'eqPoint':0};
+		var currentInfo = {"buffer":[0,0], "molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1, 'eqPoint':0};
 		//I added a variable dripSize to indicate how much titrant we're adding per drip
 		//I initialized it to 5 mL --K
 		//I also added a variable maxTit for graphing
