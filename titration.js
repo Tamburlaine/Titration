@@ -470,7 +470,7 @@ var titration=(function(){
     $( "#pKa" ).slider({
       range: "min",
       min: -2,
-      max: 8,
+      max: 6,
 	  step: .01,
 	  value: 3,
 	  formater: function(pKa){
