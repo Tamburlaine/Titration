@@ -317,7 +317,12 @@ var titration=(function(){
 				.attr("cy", function(){
 					if(maxXY){
 						var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
-						$(".circleLabel").css("top", y-322);
+						$(".circleLabel").css("display", function(){
+							if (y<0){
+							return "none";
+							}
+						})
+						$(".circleLabel").css("top", y-810);
 						return y-2;
 						}
 						})
