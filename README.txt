@@ -30,4 +30,25 @@ Required Sources are
 	
 ====Use====
 
-Initially the sliders are all set to default values 
+Initially the sliders are all set to default values of
+pKa = 3
+Moles Analyte = 1
+Titrant Concentration = 0.5 (moles/liters)
+Drip size = 0.1 mL
+
+If any value is changed, the full titration graph is shown. The user can either watch how the graph changes with
+varying values, or can click "Clear" to completely clear the graph. The titration can then be simulated by either
+clicking the dropper or by clicking "drip" to see how the pH changes with each drop added. Near the equivalence
+point, the user will observe a large jump in pH.
+
+The equivalence point is also displayed on the graph, along with a label.
+
+At each step, an "ICEbox" is displayed to the right showing the relevant equations at each volume of titrant
+added. This is designed to help students understand the relevance of these equations to the titration at each
+step.
+
+Finally, the beaker at the left is red at low pH and blue at high pH. In between, the beaker transitions from
+red to blue by passing through shades of purple corresponding to how acidic it is. The more visual learner can
+understand titration by watching the beaker change color as more titrant is added. This also gives the
+simulation more of a "lab" feel, because color changing chemicals are often added to the analyte to change with
+the pH.
