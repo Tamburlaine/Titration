@@ -29,6 +29,10 @@ body {
   stroke-width: 1.5px;
 }
 
+.circleLabel{
+	position: relative;
+}
+
 .buttonDiv{
 	position: relative;
 	left: 200px;
@@ -47,6 +51,10 @@ body {
 	margin-top: 0px;
 	margin-right: 5px;
   border-radius: 15px;
+}
+
+.circle{
+	z-index: 10000;
 }
 
 .input{

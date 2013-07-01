@@ -140,8 +140,8 @@ function Model(div){
 			 return pH
 		}
 
-		var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePH, volume){
-			
+		var dilutionPH = function(molesTitrantAdded, molesAnalyte, equivalencePoint, volume){
+			var equivalencePH = equivalencePoint[1];
 			var initialOHConc = Math.pow(10, -(14-equivalencePH));
 			var molesOH = initialOHConc * volume;
 			var excessTitrant = molesTitrantAdded - molesAnalyte

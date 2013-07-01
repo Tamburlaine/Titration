@@ -67,43 +67,13 @@ var titration=(function(){
 				  svg.append("path")
 				  .datum(data)
 				  .attr("class", "line")
-				  .attr("d", line);
+				  .attr("d", line)
+				  .style("z-index", -1);
 				  };
-				  
-			var eqPoint = model.currentInfo["eqPoint"];
 			
-			var coordFromPH = function(pH){
-				dataArray = model.currentInfo["dataArray"];
-				var dataForPoint = [];
-				for (var i=0; i<dataArray.length; i++){
-					if (dataArray[i][1]<=pH){}
-					else if (dataArray == []){break;}
-					else if (!dataArray[i-1]){break;}
-					else{
-						dataForPoint = dataArray[i-1];
-						break;
-					}
-				}
-				return dataForPoint;
-			};
-			
-			//this section turns the buffer info into graphable data
-			var buffer = model.currentInfo["buffer"];
-			
-			//this will be a function that turns the buffer info into graphable data
-			var bufferData = buffer;
-			
-			var graphBuffer = function(){
-				svg.selectAll("rect").data(bufferData).enter().append("rect")
-				.attr("x", function(){
-					var x =	582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
-					console.log("x" + x);
-					return x;
-				})
-			}();
 			
 			//this turns eqPoint into graphable data
-			var eqPointData=coordFromPH(eqPoint);
+			var eqPointData=model.currentInfo["eqPoint"];
 			
 			var maxXY = model.currentInfo["dataArray"][model.currentInfo["dataArray"].length-1];
 			var minXY = model.currentInfo["dataArray"][0];
@@ -112,11 +82,22 @@ var titration=(function(){
 			//it currently is automatically called but could easily be made into a callable function
 			// we currently have a slight problem with placement due to discrete drips
 			var graphEqPoint = function(){
-				svg.selectAll("circle").data(eqPointData).enter().append("circle")
+				$(".circleLabel").remove();
+				svg.selectAll("circle").data(eqPointData).enter().append("circle").attr("id", "circle")
+				.style("z-index", 10000)
 				.attr("cx", function(){
 					if (maxXY){
-						var x =	582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
-						console.log("x" + x);
+						$(".circleLabel").remove();
+						var x =582*((eqPointData[0]-minXY[0])/(maxXY[0]-minXY[0]));
+						var circleLabel = $("<div class = circleLabel>Equivalence Point</div>");
+						circleLabel.css("left", function(){
+											if (x < width - 100){
+												return x+40}
+											else{
+												return x-100
+											};
+						});
+						$(".titration").append(circleLabel);
 						return x;
 						}
 						})
@@ -124,10 +105,11 @@ var titration=(function(){
 					if(maxXY){
 						var y = 352 - 352*((eqPointData[1]-minXY[1])/(maxXY[1]-minXY[1]));
 						console.log("y " + y);
+						$(".circleLabel").css("top", y-322);
 						return y-2;
 						}
 						})
-				.attr("r", 5);
+				.attr("r", 5)
 				}();
 			
 			return{extendGraph:extendGraph};
@@ -212,9 +194,6 @@ var titration=(function(){
 			 $( "#dripSize" ).slider("setValue", $(".dripInp").val()/1000);
 			});
 		
-		// $(".Div").slider()
-
-		// $(".slider").data("data-slider-orientation", "vertical");
 		//now I'm binding functions to the buttons
 		//we need to figure out when they stop clicking the titration button (it might get a little nasty if
 		//we keep increasing maxTit when the data array only extends so far)
