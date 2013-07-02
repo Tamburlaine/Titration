@@ -22,3 +22,102 @@
 	position: relative;
 	top: 25px;
 }
+
+.secondDiv{
+	background-color: #2d2d2d;
+	position: absolute;
+	width: 200px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	height: 160px;
+	opacity: .9;
+	top: -600px;
+	left: 150px;
+}
+
+.secondDivButt{
+	position: relative;
+	top: 25px;
+}
+
+.thirdDiv{
+	background-color: #2d2d2d;
+	position: absolute;
+	width: 400px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	height: 130px;
+	opacity: .9;
+	top: -385px;
+	left: 210px;
+	z-index: 1000;
+}
+
+.thirdDivButt{
+	position: relative;
+	top: 25px;
+}
+
+.fourthDiv{
+	background-color: #2d2d2d;
+	position: absolute;
+	width: 100px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	height: 100px;
+	opacity: .9;
+	top: -385px;
+	left: 410px;
+	z-index: 1000;
+}
+
+.fourthDivButt{
+	position: relative;
+	top: 25px;
+}
+
+.fifthDiv{
+	background-color: #2d2d2d;
+	position: absolute;
+	width: 200px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	height: 150px;
+	opacity: .9;
+	top: -250px;
+	left: 410px;
+	z-index: 1000;
+}
+
+.fifthDivButt{
+	position: relative;
+	top: 25px;
+}
+
+.sixthDiv{
+	background-color: #2d2d2d;
+	position: absolute;
+	width: 200px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	height: 150px;
+	opacity: .9;
+	top: -250px;
+	left: 410px;
+	z-index: 1000;
+}
+
+.sixthDivButt{
+	position: relative;
+	top: 25px;
+}
