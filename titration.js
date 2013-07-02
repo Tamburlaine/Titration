@@ -371,7 +371,7 @@ var icebox = function() {
     var iceboxSetup = function(currentInfo){
         getEqInfo(currentInfo)
         $('.icebox').empty()
-        $('.icebox').append('<div class = iceboxTable><table class="table table-striped"></table></div>')
+        $('.icebox').append('<h3>Calculating the pH at equivalence</h3><div class = iceboxTable><table class="table table-striped"></table></div>')
         $('.table').append("<tr class = 'row1'></tr><tr class = 'row2 info'></tr><tr class = 'row3'></tr><tr class = 'row4 info'></tr>"
                           )
         $('.row1').append("<td></td><td>A<sup>-</sup></td><td>H<sub>2</sub>O</td><td>OH<sup>-</sup></td><td>HA</td>"
