@@ -47,9 +47,19 @@ var intro=(function(){
 			var fifthDivButt = $("<div class='fifthDivButt'><button class ='btn fifthButt'>OK</button></div>");
 			fifthDiv.append(fifthDivButt);
 			div.append(fifthDiv);
-			$('.foifthButt').click(function(){
+			$('.fifthButt').click(function(){
 				fifthDiv.remove();
 				sixthDivSetup();
+			})
+		}
+		
+		var sixthDivSetup = function(){
+			var sixthDiv=$("<div class='sixthDiv'>The ICEbox will update with the relevant equations for each stage of the titration</div>");
+			var sixthDivButt = $("<div class='sixthDivButt'><button class ='btn sixthButt'>OK</button></div>");
+			sixthDiv.append(sixthDivButt);
+			div.append(sixthDiv);
+			$('.sixthButt').click(function(){
+				sixthDiv.remove();
 			})
 		}
 	};
