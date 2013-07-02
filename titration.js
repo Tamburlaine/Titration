@@ -48,19 +48,10 @@ var titration=(function(){
 	};
 
 	function Model(div){
+        
+        //Hold relevant info for graphing, displaying the beaker, and displaying the icebox. It holds initial values so that unset values do not casue issues.
 		var currentInfo = {"molesTit":0, "molesAna":.3, "litersTit":.2, "litersAna":1, "litersTotal":.2, "Ka":0.000008, "concTit":3, "concAna":0, "dripSize":.005, "maxTit":200, "dataArray":[], 'pH':5.1, 'eqPoint':0};
-		//I added a variable dripSize to indicate how much titrant we're adding per drip
-		//I initialized it to 5 mL --K
-		//I also added a variable maxTit for graphing
-		//I think we should talk about how to deal with updating this. I think that we should have some way of automatically calculating
-		//things like the conc, totalmL, etc. without individually updating these things (because it could be a big mess if we accidentally
-		//updated the titrant mL but not the total mL or something. We can cover this tmrw
 
-
-
-		//I added this whole section here!
-		//controller calls these things a lot, but I didn't mess with the currentInfo array yet
-		//(so no automatic updates yet) --K
 
 		//adds amount to property value
 		var infoAdd = function(property, amount){
@@ -164,7 +155,7 @@ var titration=(function(){
 			infoChange("dataArray", dataArray);
             $('.icebox').remove();
             $('.titration').append('<div class = "icebox"></div>')
-            icebox().iceboxSetup($('.icebox'))
+            icebox().iceboxSetup(currentInfo)
 			return dataArray;
 		}
 
@@ -360,6 +351,82 @@ var titration=(function(){
     };
 	
 	
+    
+var icebox = function() {
+    
+    /*These variables are used to store the values needed by iceboxSetup and iceboxCalcText. They are updated by getEqInfo.*/
+    var acidInitial = 0
+    var ohInitial = 0
+    var baseInitial = 0
+    var Ka= 0
+    
+    /*getEqInfo is called by iceboxSetup to update the values that will be used in the icebox. It gets values from Model().currentInfo. Currently, it only will get values used to calculate the equivalence point. Possible future functionality would be to add other relevant points.*/
+    var getEqInfo = function(currentInfo){
+        acidInitial = 0
+        baseInitial = currentInfo['molesAna']
+        Ka = currentInfo['Ka']
+        ohInitial = 0
+    }
+    /*iceboxSetup is called in order to make the table that will display the icebox. It calls an getEqInfo, which will set the stored values needed to do the icebox and associated calculations. It aslo empties the given div, builds and fill the icebox, and makes the div that will hold the calculation text.*/
+    var iceboxSetup = function(currentInfo){
+        getEqInfo(currentInfo)
+        $('.icebox').empty()
+        $('.icebox').append('<div class = iceboxTable><table class="table table-striped"></table></div>')
+        $('.table').append("<tr class = 'row1'></tr><tr class = 'row2 info'></tr><tr class = 'row3'></tr><tr class = 'row4 info'></tr>"
+                          )
+        $('.row1').append("<td></td><td>A<sup>-</sup></td><td>H<sub>2</sub>O</td><td>OH<sup>-</sup></td><td>HA</td>"
+                         )
+        $('.row2').append("<td>Initial</td><td>" + baseInitial +"</td><td>Irrelevant</td><td>"+ohInitial+"</td><td>"+acidInitial+"</td>"
+                         )
+         $('.row3').append("<td>Change</td><td>-x</td><td>Irrelevant</td><td>+x</td><td>+x</td>"
+                          )
+          $('.row4').append("<td>End</td><td class='baseEnd'>" + baseInitial +" - x</td><td>Irrelevant</td><td class='ohEnd'>"+ohInitial+" + x</td><td class='acidEnd'>"+acidInitial+" + x</td>"
+                           )
+          $('.icebox').append('<div class = "calcText"></div>')
+          
+          iceboxCalcText(currentInfo)
+    }
+    
+    /*iceboxCalcText build the calculation text that is displayed below the icebox. It replicates the math done in model.js to some extent, with extra rounding and explanations of what is happening.*/
+    var iceboxCalcText = function(currentInfo){
+        
+        $('.calcText').empty()
+        
+        $('.calcText').append('<div class = "formula"></div>')
+        $('.formula').append('<u>[0H-] * [HA]</u> = Kb' )
+                     .append('<br> [A-] <br>')
+        
+        var ohText = $('.ohEnd').text()
+        var acidText = $('.acidEnd').text()
+        var baseText = $('.baseEnd').text()
+        var Ka= currentInfo['Ka'].toPrecision(3)
+        var Kw = Math.pow(10,-14)
+        var Kb = (Kw/Ka).toPrecision(4)
+        var pOH = Model().findPH(
+                            Math.sqrt(baseInitial*Kb)).toPrecision(3)
+             
+        $('.calcText').append('<div class = "kConversion"></div>')
+        $('.kConversion').append('<br> Kb = Kw / Ka')
+                     .append('<br>Kb = '+Kw+'/'+Ka)
+                     .append('<br>Kb = ' +Kb)
+            
+        $('.calcText').append('<div class = "pluggedIn"></div>')
+        $('.pluggedIn').append('<br><u>['+ohText+'] * ['+acidText+']</u> = '+ Kb)
+                     .append('<br> ['+baseText+']')
+                     .append('<br> Use the 5% assumption to simplify.')
+             
+        $('.calcText').append('<div class = "simplified"></div>')
+        $('.simplified').append('<br>x<sup>2</sup> = '+ (baseInitial*Kb).toPrecision(4))
+                        .append('<br>[OH<sup>-</sup>] =' + Math.sqrt(baseInitial*Kb).toPrecision(4))
+                        .append('<br>pOH =' + pOH)
+                        
+                        .append('<br>pH = 14- pOH = ' + (14.0-pOH).toPrecision(4))
+    }
+    
+    return {'iceboxSetup':iceboxSetup, 'iceboxCalcText':iceboxCalcText, 'getEqInfo':getEqInfo}
+}
+
+    
 	//setup is called as soon as the document is ready
 	//adds all the HTML elements
 	function setup(div){
