@@ -52,3 +52,7 @@ red to blue by passing through shades of purple corresponding to how acidic it i
 understand titration by watching the beaker change color as more titrant is added. This also gives the
 simulation more of a "lab" feel, because color changing chemicals are often added to the analyte to change with
 the pH.
+
+
+
+

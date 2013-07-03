@@ -265,16 +265,6 @@ var titration=(function(){
 				  .style("text-anchor", "end")
 				  .text("pH");
 
-			//extendGraph is intended to be called outside of the function
-			//It will add data the data to be graphed to the setup graph
-			var extendGraph = function(data){
-				  svg.append("path")
-				  .datum(data)
-				  .attr("class", "line")
-				  .attr("d", line)
-				  .style("z-index", -1);
-				  };
-			
 			
 			//this turns eqPoint into graphable data
 			var eqPointData=model.currentInfo["eqPoint"];
@@ -287,6 +277,7 @@ var titration=(function(){
 			// we currently have a slight problem with placement due to discrete drips
 			var graphEqPoint = function(){
 				$(".circleLabel").remove();
+				$('.circleLabel').css("opacity", 1);
 				svg.selectAll("circle").data(eqPointData).enter().append("circle").attr("id", "circle")
 				.style("z-index", 10000)
 				.attr("cx", function(){
@@ -318,8 +309,30 @@ var titration=(function(){
 						}
 						})
 				.attr("r", 5)
-				}();
+				}
+				
+			//extendGraph is intended to be called outside of the function
+			//It will add data the data to be graphed to the setup graph
+			var extendGraph = function(data){
+				  svg.append("path")
+				  .datum(data)
+				  .attr("class", "line")
+				  .attr("d", line)
+				  .style("z-index", -1);
+				  
+				if (data==0){
+					$('.circleLabel').remove();
+				}
+				 else if (data[data.length-1][1] > eqPointData[1]){
+					graphEqPoint();
+				  }
+				  else{
+					$('.circleLabel').remove();
+				  }
+				  };
 			
+
+					
 			return{extendGraph:extendGraph};
 		};
 			

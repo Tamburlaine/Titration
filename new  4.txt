@@ -1,0 +1,16 @@
+the formatting of your javascript is very neat and readable. Good, sensible divisions of code.
+good variable names
+
+it might be worth considering having a setup function that is called when the document is ready. this would avoid the problem of having multiple
+$(document).ready statements
+
+you have a lot of repeating jquery calls. Could you make an array of all the variables you want to do a specific function on
+and then do some sort of for loop? This will probably cut down on the amount of code by a fair amount. (for example when you're
+setting up IPAPulmonic around line 256 of IPA.js
+
+A few times you add something to every span in the document (like in IPAconverter.js line 77). Will this cause problems with
+embedding? What if there are already spans in the document? Maybe it would be safer to add a class to all your spans and then
+perform whatever function you want on that class only.
+
+ewwwww IPAdata.js is soooo ugly. Pretty sure that's not your fault at all though
+
