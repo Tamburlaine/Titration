@@ -317,6 +317,7 @@ var titration=(function(){
 				  svg.append("path")
 				  .datum(data)
 				  .attr("class", "line")
+				  .attr("fill", "red")
 				  .attr("d", line)
 				  .style("z-index", -1);
 				  
